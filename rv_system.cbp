@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="rv_system" />
+		<Option pch_mode="2" />
+		<Option compiler="tcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/rv_system" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="tcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="pthread" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/rv_system" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="tcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-g" />
+		</Compiler>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="os_define.h" />
+		<Unit filename="rv_system/os_define.h" />
+		<Unit filename="rv_system/rv_system.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system.h" />
+		<Unit filename="rv_system/rv_system.test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system.test.h" />
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock.h" />
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock.test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock.test.h" />
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock_holder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock_holder.h" />
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock_holder_multiple.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_lock/rv_system_lock_holder_multiple.h" />
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory.h" />
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory.test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory.test.h" />
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory_allocation.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory_allocation.h" />
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory_frame.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory_frame.h" />
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory_lock.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_memory/rv_system_memory_lock.h" />
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock.h" />
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock.test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock.test.h" />
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock_holder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock_holder.h" />
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock_holder_multiple.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_rwlock/rv_system_rwlock_holder_multiple.h" />
+		<Unit filename="rv_system/rv_system_time/rv_system_time.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_time/rv_system_time.h" />
+		<Unit filename="rv_system/rv_system_time/rv_system_time.test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_time/rv_system_time.test.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
