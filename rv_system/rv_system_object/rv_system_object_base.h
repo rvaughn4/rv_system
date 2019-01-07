@@ -41,6 +41,8 @@
     //memory lock
         struct rv_system_memory_lock_s;
 
+    #define rv_system_object_type__object_base "rv_system_object_type__object_base"
+
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
     //init function, returns true if successful
@@ -196,13 +198,13 @@
         struct rv_system_object_base_s
         {
         //memory
-            rv_system_memory_s              *mem;
+            struct rv_system_memory_s              *mem;
         //vtble
-            rv_system_object_base_vtble_s   *vtble;
+            struct rv_system_object_base_vtble_s   *vtble;
         //object pointer
-            void                            *top;
+            void                                   *top;
         //was allocated dynamically by create function
-            bool                            is_dynamic;
+            bool                                    is_dynamic;
         };
 
 /* ------------------- static function stubs --------------------------------- */
@@ -216,7 +218,7 @@
         //size of memory pointed to (must be equal or bigger than size of struct)
             uint64_t                            sz,
         //memory
-            rv_system_memory_s                  *mem
+            struct rv_system_memory_s           *mem
         );
         typedef bool (* rv_system_object_base_create_static_ptr)
         (
@@ -225,7 +227,7 @@
         //size of memory pointed to (must be equal or bigger than size of struct)
             uint64_t                            sz,
         //memory
-            rv_system_memory_s                  *mem
+            struct rv_system_memory_s           *mem
         );
 
     //rv_system_object_base_create_super_static() initiates struct in externally allocated memory
@@ -233,86 +235,77 @@
         bool rv_system_object_base_create_super_static
         (
         //pointer to memory holding struct
-            struct rv_system_object_base_s     *t,
+            struct rv_system_object_base_s              *t,
         //size of memory pointed to (must be equal or bigger than size of struct)
-            uint64_t                            sz,
+            uint64_t                                    sz,
         //vtble
-            rv_system_object_base_vtble_s       *vtble,
+            struct rv_system_object_base_vtble_s        *vtble,
         //top object
-            void                                *top,
+            void                                        *top,
         //memory
-            rv_system_memory_s                  *mem
+            struct rv_system_memory_s                   *mem
         );
         typedef bool (* rv_system_object_base_create_super_static_ptr)
         (
         //pointer to memory holding struct
-            struct rv_system_object_base_s     *t,
+            struct rv_system_object_base_s              *t,
         //size of memory pointed to (must be equal or bigger than size of struct)
-            uint64_t                            sz,
+            uint64_t                                    sz,
         //vtble
-            rv_system_object_base_vtble_s       *vtble,
+            struct rv_system_object_base_vtble_s        *vtble,
         //top object
-            void                                *top,
+            void                                        *top,
         //memory
-            rv_system_memory_s                  *mem
+            struct rv_system_memory_s                   *mem
         );
 
     //rv_system_object_base_create() initiates struct in newly allocated memory
-    //returns true when successful
-        bool rv_system_object_base_create
+        struct rv_system_object_base_s *rv_system_object_base_create
         (
-        //pointer to memory holding struct
-            struct rv_system_object_base_s     *t,
-        //size of memory pointed to (must be equal or bigger than size of struct)
-            uint64_t                            sz,
         //memory
-            rv_system_memory_s                  *mem,
+            struct rv_system_memory_s                  *mem,
         //memory lock (optional)
-            rv_system_memory_lock_s             *mem_lock_optional
+            struct rv_system_memory_lock_s             *mem_lock_optional
         );
-        typedef bool (* rv_system_object_base_create_ptr)
+        typedef struct rv_system_object_base_s *(* rv_system_object_base_create_ptr)
         (
-        //pointer to memory holding struct
-            struct rv_system_object_base_s     *t,
-        //size of memory pointed to (must be equal or bigger than size of struct)
-            uint64_t                            sz,
         //memory
-            rv_system_memory_s                  *mem,
+            struct rv_system_memory_s                  *mem,
         //memory lock (optional)
-            rv_system_memory_lock_s             *mem_lock_optional
+            struct rv_system_memory_lock_s             *mem_lock_optional
         );
 
     //rv_system_object_base_create_super() initiates struct in newly allocated memory
-    //returns true when successful
-        bool rv_system_object_base_create_super
+    //returns top object when successful
+        void *rv_system_object_base_create_super
         (
-        //pointer to memory holding struct
-            struct rv_system_object_base_s     *t,
+        //pointer to receive base
+            struct rv_system_object_base_s              **pt,
+        //offset to base object
+            uint16_t                                    base_offset,
         //size of memory pointed to (must be equal or bigger than size of struct)
-            uint64_t                            sz,
+            uint64_t                                    sz,
         //vtble
-            rv_system_object_base_vtble_s       *vtble,
-        //top object
-            void                                *top,
+            struct rv_system_object_base_vtble_s        *vtble,
         //memory
-            rv_system_memory_s                  *mem,
+            struct rv_system_memory_s                   *mem,
         //memory lock (optional)
-            rv_system_memory_lock_s             *mem_lock_optional
+            struct rv_system_memory_lock_s              *mem_lock_optional
         );
-        typedef bool (* rv_system_object_base_create_super_ptr)
+        typedef void *(* rv_system_object_base_create_super_ptr)
         (
-        //pointer to memory holding struct
-            struct rv_system_object_base_s     *t,
+        //pointer to receive base
+            struct rv_system_object_base_s              **pt,
+        //offset to base object
+            uint16_t                                    base_offset,
         //size of memory pointed to (must be equal or bigger than size of struct)
-            uint64_t                            sz,
+            uint64_t                                    sz,
         //vtble
-            rv_system_object_base_vtble_s       *vtble,
-        //top object
-            void                                *top,
+            struct rv_system_object_base_vtble_s        *vtble,
         //memory
-            rv_system_memory_s                  *mem,
+            struct rv_system_memory_s                   *mem,
         //memory lock (optional)
-            rv_system_memory_lock_s             *mem_lock_optional
+            struct rv_system_memory_lock_s              *mem_lock_optional
         );
 
     //rv_system_object_base_destroy() releases resources in struct, releases struct memory if was allocated dynamically
@@ -334,7 +327,7 @@
         //pointer to memory holding struct
             struct rv_system_object_base_s     *t,
         //pointer to receive object of type
-            void                                **pp;
+            void                                **pp,
         //type to get
             char                                *ctype
         );
@@ -343,7 +336,7 @@
         //pointer to memory holding struct
             struct rv_system_object_base_s     *t,
         //pointer to receive object of type
-            void                                **pp;
+            void                                **pp,
         //type to get
             char                                *ctype
         );
@@ -433,7 +426,7 @@
 /* -- virtual method corresponding static function stubs --------------------- */
 
     //init function, returns true if successful
-        typedef bool (* __rv_system_object_base_init)
+        bool __rv_system_object_base_init
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -442,7 +435,7 @@
         );
 
     //deinit function
-        typedef void (* __rv_system_object_base_deinit)
+        void __rv_system_object_base_deinit
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -451,7 +444,7 @@
         );
 
     //gen ref function, returns false if fails
-        typedef bool (* __rv_system_object_base_gen_ref)
+        bool __rv_system_object_base_gen_ref
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -462,7 +455,7 @@
         );
 
     //gen readlock function, returns false if fails
-        typedef bool (* __rv_system_object_base_gen_readlock)
+        bool __rv_system_object_base_gen_readlock
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -473,7 +466,7 @@
         );
 
     //gen writelock function, returns false if fails
-        typedef bool (* __rv_system_object_base_gen_writelock)
+        bool __rv_system_object_base_gen_writelock
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -484,7 +477,7 @@
         );
 
     //get pointer to type function, returns false if not available
-        typedef bool (* __rv_system_object_base_get_type)
+        bool __rv_system_object_base_get_type
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -497,7 +490,7 @@
         );
 
     //get type name function, returns size needed to copy, even if buffer is null or too small
-        typedef uint16_t (* __rv_system_object_base_get_type_name)
+        uint16_t __rv_system_object_base_get_type_name
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -510,7 +503,7 @@
         );
 
     //get all type names function, returns size needed to copy even if buffer is null or too small
-        typedef uint16_t (* __rv_system_object_base_get_all_type_names)
+        uint16_t __rv_system_object_base_get_all_type_names
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -523,7 +516,7 @@
         );
 
     //get size funcion, returns size of object and all memory owned by object including child objects
-        typedef uint64_t (* __rv_system_object_base_get_size)
+        uint64_t __rv_system_object_base_get_size
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -532,7 +525,7 @@
         );
 
     //get type function
-        typedef char *(* __rv_system_object_base_get_type_value)
+        char *__rv_system_object_base_get_type_value
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
@@ -541,7 +534,7 @@
         );
 
     //test type function, returns true if object is of that type
-        typedef bool (* __rv_system_object_base_is_type)
+        bool __rv_system_object_base_is_type
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
