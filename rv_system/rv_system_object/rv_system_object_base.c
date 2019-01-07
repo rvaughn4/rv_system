@@ -361,9 +361,9 @@
         //pointer to top level object, inherits base object
             void                                *top,
         //pointer to receive object of type
-            void **pp,
+            void                                **pp,
         //string name of type to fetch
-            char *ctype
+            char                                *ctype
         )
         {
             if( (char *)ctype == (char *)rv_system_object_type__object_base )
