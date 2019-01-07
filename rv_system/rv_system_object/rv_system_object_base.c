@@ -388,7 +388,7 @@
             uint16_t                            szb
         )
         {
-            return 0;
+            return __rv_system_object_base_get_type_name__helper( pb, szb, rv_system_object_type__object_base );
         }
 
     //get all type names function, returns size needed to copy even if buffer is null or too small
@@ -404,7 +404,7 @@
             uint16_t                            szb
         )
         {
-            return 0;
+            return __rv_system_object_base_get_all_type_names__helper( p_base, top, pb, szb, 0, 0 );
         }
 
     //get size funcion, returns size of object and all memory owned by object including child objects
@@ -443,6 +443,83 @@
         )
         {
             return (char *)ctype == (char *)rv_system_object_type__object_base;
+        }
+
+/* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
+
+    //helper function that actually does work behind get_type_name function
+        uint16_t __rv_system_object_base_get_type_name__helper
+        (
+        //buffer to hold name
+            char                                *pb,
+        //size of buffer
+            uint16_t                            szb,
+        //type name actual
+            char                                *ctype
+        )
+        {
+            uint32_t i, s;
+        //loop
+            i = 0;
+            s = szb;
+            do
+            {
+            //copy
+                if( pb && i < s )
+                    pb[ i ] = *ctype;
+                i++;
+                ctype++;
+            }
+            while( *ctype );
+        //return
+            return (uint16_t)i;
+        }
+
+    //helper function that does work behind get_all_type_names()
+        uint16_t __rv_system_object_base_get_all_type_names__helper
+        (
+        //pointer to object base
+            struct rv_system_object_base_s          *p_base,
+        //pointer to top level object, inherits base object
+            void                                    *top,
+        //buffer to hold name
+            char                                    *pb,
+        //size to buffer
+            uint16_t                                szb,
+        //parent vtble
+            struct rv_system_object_base_vtble_s    *next_vtble,
+        //parent object pointer
+            void                                    *next_object
+        )
+        {
+            uint32_t c, szr;
+            char *npb;
+        //get this type name
+            c = p_base->vtble->get_type_name( p_base, top, pb, szb );
+            if( !next_vtble || !next_object )
+                return (uint16_t)c;
+        //compute offset
+            if( c )
+                c--;
+            if( pb && c < (uint32_t)szb )
+                npb = &pb[ c ];
+            else
+                npb = 0;
+            szr = (uint32_t)szb - c;
+        //spacing
+            c += __rv_system_object_base_get_type_name__helper( npb, (uint16_t)szr, "<--" );
+        //compute offset
+            if( c )
+                c--;
+            if( pb && c < (uint32_t)szb )
+                npb = &pb[ c ];
+            else
+                npb = 0;
+            szr = (uint32_t)szb - c;
+        //next name
+            c += next_vtble->get_all_type_names( p_base, next_object, npb, (uint16_t)szr );
+        //return size
+            return (uint16_t)c;
         }
 
 //header guard end

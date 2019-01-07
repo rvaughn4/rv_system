@@ -544,6 +544,36 @@
             char *ctype
         );
 
+/* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
+
+    //helper function that actually does work behind get_type_name function
+        uint16_t __rv_system_object_base_get_type_name__helper
+        (
+        //buffer to hold name
+            char                                *pb,
+        //size of buffer
+            uint16_t                            szb,
+        //type name actual
+            char                                *ctype
+        );
+
+    //helper function that does work behind get_all_type_names()
+        uint16_t __rv_system_object_base_get_all_type_names__helper
+        (
+        //pointer to object base
+            struct rv_system_object_base_s          *p_base,
+        //pointer to top level object, inherits base object
+            void                                    *top,
+        //buffer to hold name
+            char                                    *pb,
+        //size to buffer
+            uint16_t                                szb,
+        //parent vtble
+            struct rv_system_object_base_vtble_s    *next_vtble,
+        //parent object pointer
+            void                                    *next_object
+        );
+
 /* -------- structures containing easy function pointers --------------------- */
 
     //contains methods
