@@ -15,6 +15,8 @@
 
     //object base
         #include "rv_system_object_base.h"
+    //rwlock
+        #include "../rv_system_rwlock/rv_system_rwlock.h"
 
 /* ------------------- structure stubs --------------------------------------- */
 
@@ -29,7 +31,10 @@
     //object base
         struct rv_system_object_s
         {
-            struct rv_system_object_base_s base;
+        //super
+            struct rv_system_object_base_s      base;
+        //rwlock
+            struct rv_system_rwlock_s           rwl;
         };
 
 /* ------------------- static function stubs --------------------------------- */
@@ -131,6 +136,46 @@
             struct rv_system_memory_s                   *mem,
         //memory lock (optional)
             struct rv_system_memory_lock_s              *mem_lock_optional
+        );
+
+    //rv_system_object_get_super_offset() returns offset of super
+        uint64_t rv_system_object_get_super_offset
+        (
+            void
+        );
+        typedef uint64_t (* rv_system_object_get_super_offset_ptr)
+        (
+            void
+        );
+
+    //rv_system_object_get_from_super() return pointer of top from super
+        struct rv_system_object_s *rv_system_object_get_from_super
+        (
+            struct rv_system_object_base_s  *super
+        );
+        typedef struct rv_system_object_s *(* rv_system_object_get_from_super_ptr)
+        (
+            struct rv_system_object_base_s  *super
+        );
+
+    //rv_system_object_get_base_offset() returns offset of base
+        uint64_t rv_system_object_get_base_offset
+        (
+            void
+        );
+        typedef uint64_t (* rv_system_object_get_base_offset_ptr)
+        (
+            void
+        );
+
+    //rv_system_object_get_from_base() return pointer of top from base
+        struct rv_system_object_s *rv_system_object_get_from_base
+        (
+            struct rv_system_object_base_s  *base
+        );
+        typedef struct rv_system_object_s *(* rv_system_object_get_from_base_ptr)
+        (
+            struct rv_system_object_base_s  *base
         );
 
 /* -- virtual method corresponding static function stubs --------------------- */
@@ -273,6 +318,14 @@
             rv_system_object_create_ptr                    create;
         //create super
             rv_system_object_create_super_ptr              create_super;
+        //get super offset
+            rv_system_object_get_super_offset_ptr          get_super_offset;
+        //get from super
+            rv_system_object_get_from_super_ptr            get_from_super;
+        //get base offset
+            rv_system_object_get_base_offset_ptr           get_base_offset;
+        //get from base
+            rv_system_object_get_from_base_ptr             get_from_base;
         };
         struct rv_system_object_ptr_s rv_system_object;
 
