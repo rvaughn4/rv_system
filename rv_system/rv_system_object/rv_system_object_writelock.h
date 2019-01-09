@@ -136,6 +136,26 @@
             struct rv_system_memory_lock_s              *mem_lock_optional
         );
 
+    //rv_system_object_writelock_get_super_offset() returns offset of super
+        uint64_t rv_system_object_writelock_get_super_offset
+        (
+            void
+        );
+        typedef uint64_t (* rv_system_object_writelock_get_super_offset_ptr)
+        (
+            void
+        );
+
+    //rv_system_object_writelock_get_base_offset() returns offset of base
+        uint64_t rv_system_object_writelock_get_base_offset
+        (
+            void
+        );
+        typedef uint64_t (* rv_system_object_writelock_get_base_offset_ptr)
+        (
+            void
+        );
+
 /* -- virtual method corresponding static function stubs --------------------- */
 
     //init function, returns true if successful
@@ -276,6 +296,10 @@
             rv_system_object_writelock_create_ptr                    create;
         //create super
             rv_system_object_writelock_create_super_ptr              create_super;
+        //get super offset
+            rv_system_object_writelock_get_super_offset_ptr          get_super_offset;
+        //get base offset
+            rv_system_object_writelock_get_base_offset_ptr           get_base_offset;
         };
         struct rv_system_object_writelock_ptr_s rv_system_object_writelock;
 

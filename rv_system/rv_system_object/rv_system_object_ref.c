@@ -50,9 +50,7 @@
         /*.create*/                 rv_system_object_ref_create,
         /*.create_super*/           rv_system_object_ref_create_super,
         /*.get_super_offset=*/      rv_system_object_ref_get_super_offset,
-        /*.get_from_super=*/        rv_system_object_ref_get_from_super,
-        /*.get_base_offset=*/       rv_system_object_ref_get_base_offset,
-        /*.get_from_base=*/         rv_system_object_ref_get_from_base
+        /*.get_base_offset=*/       rv_system_object_ref_get_base_offset
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -169,23 +167,6 @@
             return b.l - a.l;
         }
 
-    //rv_system_object_ref_get_from_super() return pointer of top from super
-        struct rv_system_object_ref_s *rv_system_object_ref_get_from_super
-        (
-            struct rv_system_object_base_s  *super
-        )
-        {
-            union
-            {
-                struct rv_system_object_base_s          *super;
-                struct rv_system_object_ref_s           *top;
-                uint64_t                                l;
-            } a;
-            a.super = super;
-            a.l -= rv_system_object_ref_get_super_offset();
-            return a.top;
-        };
-
     //rv_system_object_ref_get_base_offset() returns offset of base
         uint64_t rv_system_object_ref_get_base_offset
         (
@@ -204,23 +185,6 @@
             return b.l - a.l;
         }
 
-    //rv_system_object_ref_get_from_base() return pointer of top from base
-        struct rv_system_object_ref_s *rv_system_object_ref_get_from_base
-        (
-            struct rv_system_object_base_s  *base
-        )
-        {
-            union
-            {
-                struct rv_system_object_base_s          *base;
-                struct rv_system_object_ref_s           *top;
-                uint64_t                                l;
-            } a;
-            a.base = base;
-            a.l -= rv_system_object_ref_get_base_offset();
-            return a.top;
-        };
-
 /* -- virtual method corresponding static function definitions --------------------- */
 
     //init function, returns true if successful
@@ -237,10 +201,18 @@
             if( !__rv_system_object_base_init( p_base, top ) )
                 return 0;
         //init
-            po = rv_system_object_ref_get_from_base( p_base );
-            po->obj = 0;
-        //return success
-            return 1;
+            do
+            {
+                if( !p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_ref ) )
+                    continue;
+                po->obj = 0;
+            //return success
+                return 1;
+            }
+            while( 0 );
+        //fail
+            __rv_system_object_base_deinit( p_base, top );
+            return 0;
         }
 
     //deinit function
@@ -254,8 +226,8 @@
         {
             struct rv_system_object_ref_s *po;
         //deinit this object - nothing todo
-            po = rv_system_object_ref_get_from_base( p_base );
-            po->obj = 0;
+            if( p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_ref ) )
+                po->obj = 0;
         //deinit super
             __rv_system_object_base_deinit( p_base, top );
         }

@@ -50,9 +50,7 @@
         /*.create*/                 rv_system_object_create,
         /*.create_super*/           rv_system_object_create_super,
         /*.get_super_offset=*/      rv_system_object_get_super_offset,
-        /*.get_from_super=*/        rv_system_object_get_from_super,
-        /*.get_base_offset=*/       rv_system_object_get_base_offset,
-        /*.get_from_base=*/         rv_system_object_get_from_base
+        /*.get_base_offset=*/       rv_system_object_get_base_offset
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -90,19 +88,11 @@
         )
         {
             uint64_t szr;
-            union
-            {
-                void *p;
-                uint64_t l;
-            } a, b;
         //test size
             if( sz < sizeof(struct rv_system_object_s) )
                 return 0;
         //compute size remaining
-            a.p = (void *)t;
-            b.p = (void *)&t->base;
-            b.l = b.l - a.l;
-            szr = sz - b.l;
+            szr = sz - rv_system_object_get_super_offset();
         //super
             return rv_system_object_base_create_super_static( &t->base, szr, &rv_system_object_vtble, top, mem );
         };
@@ -137,17 +127,13 @@
             struct rv_system_memory_lock_s              *mem_lock_optional
         )
         {
-            union
-            {
-                struct rv_system_object_s       *o;
-                struct rv_system_object_base_s  *b;
-            } a;
+            struct rv_system_object_base_s  *b;
             void *r;
         //create super
-            r = rv_system_object_base_create_super( &a.b, base_offset + 0, sz, vtble, mem, mem_lock_optional );
+            r = rv_system_object_base_create_super( &b, base_offset + 0, sz, vtble, mem, mem_lock_optional );
         //return pointers
             if( pt )
-                *pt = a.o;
+                b->vtble->get_type( b, r, (void **)pt, rv_system_object_type__object );
             return r;
         };
 
@@ -169,23 +155,6 @@
             return b.l - a.l;
         }
 
-    //rv_system_object_get_from_super() return pointer of top from super
-        struct rv_system_object_s *rv_system_object_get_from_super
-        (
-            struct rv_system_object_base_s  *super
-        )
-        {
-            union
-            {
-                struct rv_system_object_base_s  *super;
-                struct rv_system_object_s       *top;
-                uint64_t                        l;
-            } a;
-            a.super = super;
-            a.l -= rv_system_object_get_super_offset();
-            return a.top;
-        };
-
     //rv_system_object_get_base_offset() returns offset of base
         uint64_t rv_system_object_get_base_offset
         (
@@ -204,23 +173,6 @@
             return b.l - a.l;
         }
 
-    //rv_system_object_get_from_base() return pointer of top from base
-        struct rv_system_object_s *rv_system_object_get_from_base
-        (
-            struct rv_system_object_base_s  *base
-        )
-        {
-            union
-            {
-                struct rv_system_object_base_s  *base;
-                struct rv_system_object_s       *top;
-                uint64_t                        l;
-            } a;
-            a.base = base;
-            a.l -= rv_system_object_get_base_offset();
-            return a.top;
-        };
-
 /* -- virtual method corresponding static function definitions --------------------- */
 
     //init function, returns true if successful
@@ -236,10 +188,12 @@
         //init super first
             if( !__rv_system_object_base_init( p_base, top ) )
                 return 0;
-            po = rv_system_object_get_from_base( p_base );
         //fail loop
             do
             {
+            //get obj
+                if( !p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object ) )
+                    continue;
             //init rwlock
                 if( !rv_system_rwlock_create_static( &po->rwl, sizeof( po->rwl ) ) )
                     continue;
@@ -264,8 +218,8 @@
         {
             struct rv_system_object_s *po;
         //destroy lock
-            po = rv_system_object_get_from_base( p_base );
-            rv_system_rwlock_destroy_static( &po->rwl );
+            if( p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object ) )
+                rv_system_rwlock_destroy_static( &po->rwl );
         //deinit super
             __rv_system_object_base_deinit( p_base, top );
         }

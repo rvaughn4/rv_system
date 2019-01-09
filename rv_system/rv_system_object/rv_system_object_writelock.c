@@ -48,7 +48,9 @@
         /*.create_static=*/         rv_system_object_writelock_create_static,
         /*.create_super_static*/    rv_system_object_writelock_create_super_static,
         /*.create*/                 rv_system_object_writelock_create,
-        /*.create_super*/           rv_system_object_writelock_create_super
+        /*.create_super*/           rv_system_object_writelock_create_super,
+        /*.get_super_offset=*/      rv_system_object_writelock_get_super_offset,
+        /*.get_base_offset=*/       rv_system_object_writelock_get_base_offset
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -86,19 +88,11 @@
         )
         {
             uint64_t szr;
-            union
-            {
-                void *p;
-                uint64_t l;
-            } a, b;
         //test size
             if( sz < sizeof(struct rv_system_object_writelock_s) )
                 return 0;
         //compute size remaining
-            a.p = (void *)t;
-            b.p = (void *)&t->base;
-            b.l = b.l - a.l;
-            szr = sz - b.l;
+            szr = sz - rv_system_object_writelock_get_super_offset();
         //super
             return rv_system_object_base_create_super_static( &t->base, szr, &rv_system_object_writelock_vtble, top, mem );
         };
@@ -147,6 +141,42 @@
             return r;
         };
 
+    //rv_system_object_writelock_get_super_offset() returns offset of super
+        uint64_t rv_system_object_writelock_get_super_offset
+        (
+            void
+        )
+        {
+            struct rv_system_object_writelock_s ds;
+            union
+            {
+                struct rv_system_object_writelock_s         *top;
+                struct rv_system_object_base_s              *super;
+                uint64_t                                    l;
+            } a, b;
+            a.top = &ds;
+            b.super = &ds.base;
+            return b.l - a.l;
+        }
+
+    //rv_system_object_writelock_get_base_offset() returns offset of base
+        uint64_t rv_system_object_writelock_get_base_offset
+        (
+            void
+        )
+        {
+            struct rv_system_object_writelock_s ds;
+            union
+            {
+                struct rv_system_object_writelock_s         *top;
+                struct rv_system_object_base_s              *base;
+                uint64_t                                    l;
+            } a, b;
+            a.top = &ds;
+            b.base = &ds.base;
+            return b.l - a.l;
+        }
+
 /* -- virtual method corresponding static function definitions --------------------- */
 
     //init function, returns true if successful
@@ -158,12 +188,23 @@
             void                                *top
         )
         {
+            struct rv_system_object_writelock_s *po;
         //init super first
             if( !__rv_system_object_base_init( p_base, top ) )
                 return 0;
-            //nothing todo
-        //return success
-            return 1;
+        //init
+            do
+            {
+                if( !p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_writelock ) )
+                    continue;
+                po->obj = 0;
+            //return success
+                return 1;
+            }
+            while( 0 );
+        //fail
+            __rv_system_object_base_deinit( p_base, top );
+            return 0;
         }
 
     //deinit function
@@ -175,7 +216,10 @@
             void                                *top
         )
         {
+            struct rv_system_object_writelock_s *po;
         //deinit this object - nothing todo
+            if( p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_writelock ) )
+                po->obj = 0;
         //deinit super
             __rv_system_object_base_deinit( p_base, top );
         }
@@ -191,7 +235,7 @@
             struct rv_system_object_ref_s       **pp
         )
         {
-            return 0;
+            return rv_system_object_ref_create( p_base->mem, 0 );
         };
 
     //gen readlock function, returns false if fails
