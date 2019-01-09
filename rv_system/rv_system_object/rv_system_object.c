@@ -281,7 +281,7 @@
             struct rv_system_object_ref_s       **pp
         )
         {
-            return 0;
+            return rv_system_object_ref_create( p_base->mem, 0 );
         };
 
     //gen readlock function, returns false if fails
@@ -295,7 +295,7 @@
             struct rv_system_object_readlock_s **pp
         )
         {
-            return 0;
+            return rv_system_object_readlock_create( p_base->mem, 0 );
         };
 
     //gen writelock function, returns false if fails
@@ -309,7 +309,7 @@
             struct rv_system_object_writelock_s **pp
         )
         {
-            return 0;
+            return rv_system_object_writelock_create( p_base->mem, 0 );
         };
 
     //get pointer to type function, returns false if not available

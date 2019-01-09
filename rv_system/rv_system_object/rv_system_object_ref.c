@@ -48,7 +48,11 @@
         /*.create_static=*/         rv_system_object_ref_create_static,
         /*.create_super_static*/    rv_system_object_ref_create_super_static,
         /*.create*/                 rv_system_object_ref_create,
-        /*.create_super*/           rv_system_object_ref_create_super
+        /*.create_super*/           rv_system_object_ref_create_super,
+        /*.get_super_offset=*/      rv_system_object_ref_get_super_offset,
+        /*.get_from_super=*/        rv_system_object_ref_get_from_super,
+        /*.get_base_offset=*/       rv_system_object_ref_get_base_offset,
+        /*.get_from_base=*/         rv_system_object_ref_get_from_base
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -147,6 +151,76 @@
             return r;
         };
 
+    //rv_system_object_ref_get_super_offset() returns offset of super
+        uint64_t rv_system_object_ref_get_super_offset
+        (
+            void
+        )
+        {
+            struct rv_system_object_ref_s ds;
+            union
+            {
+                struct rv_system_object_ref_s               *top;
+                struct rv_system_object_base_s              *super;
+                uint64_t                                    l;
+            } a, b;
+            a.top = &ds;
+            b.super = &ds.base;
+            return b.l - a.l;
+        }
+
+    //rv_system_object_ref_get_from_super() return pointer of top from super
+        struct rv_system_object_ref_s *rv_system_object_ref_get_from_super
+        (
+            struct rv_system_object_base_s  *super
+        )
+        {
+            union
+            {
+                struct rv_system_object_base_s          *super;
+                struct rv_system_object_ref_s           *top;
+                uint64_t                                l;
+            } a;
+            a.super = super;
+            a.l -= rv_system_object_ref_get_super_offset();
+            return a.top;
+        };
+
+    //rv_system_object_ref_get_base_offset() returns offset of base
+        uint64_t rv_system_object_ref_get_base_offset
+        (
+            void
+        )
+        {
+            struct rv_system_object_ref_s ds;
+            union
+            {
+                struct rv_system_object_ref_s               *top;
+                struct rv_system_object_base_s              *base;
+                uint64_t                                    l;
+            } a, b;
+            a.top = &ds;
+            b.base = &ds.base;
+            return b.l - a.l;
+        }
+
+    //rv_system_object_ref_get_from_base() return pointer of top from base
+        struct rv_system_object_ref_s *rv_system_object_ref_get_from_base
+        (
+            struct rv_system_object_base_s  *base
+        )
+        {
+            union
+            {
+                struct rv_system_object_base_s          *base;
+                struct rv_system_object_ref_s           *top;
+                uint64_t                                l;
+            } a;
+            a.base = base;
+            a.l -= rv_system_object_ref_get_base_offset();
+            return a.top;
+        };
+
 /* -- virtual method corresponding static function definitions --------------------- */
 
     //init function, returns true if successful
@@ -158,10 +232,13 @@
             void                                *top
         )
         {
+            struct rv_system_object_ref_s *po;
         //init super first
             if( !__rv_system_object_base_init( p_base, top ) )
                 return 0;
-            //nothing todo
+        //init
+            po = rv_system_object_ref_get_from_base( p_base );
+            po->obj = 0;
         //return success
             return 1;
         }
@@ -175,7 +252,10 @@
             void                                *top
         )
         {
+            struct rv_system_object_ref_s *po;
         //deinit this object - nothing todo
+            po = rv_system_object_ref_get_from_base( p_base );
+            po->obj = 0;
         //deinit super
             __rv_system_object_base_deinit( p_base, top );
         }
