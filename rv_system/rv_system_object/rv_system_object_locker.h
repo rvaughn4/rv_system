@@ -169,14 +169,14 @@
         (
         //pointer to struct
             struct rv_system_object_locker_s     *t,
-        //pointer to object to add
+        //pointer to object to test
             struct rv_system_object_base_s       *o
         );
         typedef bool (* rv_system_object_locker_contains_ptr)
         (
         //pointer to struct
             struct rv_system_object_locker_s     *t,
-        //pointer to object to add
+        //pointer to object to test
             struct rv_system_object_base_s       *o
         );
 
@@ -185,15 +185,40 @@
         (
         //pointer to struct
             struct rv_system_object_locker_s     *t,
-        //pointer to lock to add
+        //pointer to lock to test
             struct rv_system_object_base_s       *o
         );
         typedef bool (* rv_system_object_locker_is_locked_ptr)
         (
         //pointer to struct
             struct rv_system_object_locker_s     *t,
-        //pointer to object to add
+        //pointer to object to test
             struct rv_system_object_base_s       *o
+        );
+
+    //rv_system_object_locker_get_locked() returns true if object is in the collection and locked,
+    //      fetches pointer to lock of specified type
+        bool rv_system_object_locker_get_locked
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s     *t,
+        //pointer to object to test
+            struct rv_system_object_base_s       *o,
+        //type of lock to fetch
+            char                                 *ctype,
+        //pointer to receive pointer to lock
+            void                                 **pl
+        );
+        typedef bool (* rv_system_object_locker_get_locked_ptr)
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s     *t,
+        //pointer to object to test
+            struct rv_system_object_base_s       *o,
+        //type of lock to fetch
+            char                                 *ctype,
+        //pointer to receive pointer to lock
+            void                                 **pl
         );
 
 /* -- virtual method corresponding static function stubs --------------------- */
