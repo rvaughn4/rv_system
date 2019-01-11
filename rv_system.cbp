@@ -92,6 +92,14 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="rv_system/rv_system_object/rv_system_object_base.h" />
+		<Unit filename="rv_system/rv_system_object/rv_system_object_locker.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_object/rv_system_object_locker.h" />
+		<Unit filename="rv_system/rv_system_object/rv_system_object_locker_multiple.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rv_system/rv_system_object/rv_system_object_locker_multiple.h" />
 		<Unit filename="rv_system/rv_system_object/rv_system_object_readlock.c">
 			<Option compilerVar="CC" />
 		</Unit>
