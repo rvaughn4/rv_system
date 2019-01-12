@@ -17,6 +17,8 @@
         #include <stdint.h>
     //standard boolean type
         #include <stdbool.h>
+    //rwlocker
+        #include "../rv_system_rwlock/rv_system_rwlock_holder.h"
 
 /* ------------------- structure stubs --------------------------------------- */
 
@@ -59,6 +61,8 @@
             struct rv_system_object_entry_s     first_entry;
         //entry count
             uint8_t                             entry_cnt;
+        //lock holder
+            struct rv_system_rwlock_holder_s    *lh, slh;
         };
 
 /* ------------------- static function stubs --------------------------------- */
