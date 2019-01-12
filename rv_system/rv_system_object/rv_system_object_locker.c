@@ -193,11 +193,12 @@
             //skip blanks or locked
                 if( !e->o || e->is_locked )
                     continue;
-            //set locked flags
+            //set locked flags and link
                 if( all_must_lock_or_fail )
                 {
                     e->is_locked = 1;
-                    //link
+                    if( e->l )
+                        e->l->vtble->link( e->l, e->o, is_blocking, timeout_ms );
                 }
                 else
                 {
@@ -208,6 +209,8 @@
                 //test
                     e->is_locked = rv_system_rwlock_holder_is_locked( t->lh, rwl );
                 //link
+                    if( e->l )
+                        e->l->vtble->link( e->l, e->o, is_blocking, timeout_ms );
                 }
             }
         //return success

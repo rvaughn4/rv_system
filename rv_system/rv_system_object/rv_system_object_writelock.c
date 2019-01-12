@@ -21,6 +21,9 @@
         #include "rv_system_object_writelock.h"
     //object
         #include "rv_system_object_ref.h"
+    //rwl
+        #include "../rv_system_rwlock/rv_system_rwlock.h"
+        #include "../rv_system_rwlock/rv_system_rwlock_holder.h"
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
@@ -29,14 +32,15 @@
         /*.init=*/                  (__rv_system_object_base_init_ptr)                  __rv_system_object_writelock_init,
         /*.deinit=*/                (__rv_system_object_base_deinit_ptr)                __rv_system_object_writelock_deinit,
         /*.gen_ref=*/               (__rv_system_object_base_gen_ref_ptr)               __rv_system_object_writelock_gen_ref,
-        /*.gen_writelock=*/          (__rv_system_object_base_gen_readlock_ptr)          __rv_system_object_writelock_gen_readlock,
+        /*.gen_writelock=*/         (__rv_system_object_base_gen_readlock_ptr)          __rv_system_object_writelock_gen_readlock,
         /*.gen_writelock=*/         (__rv_system_object_base_gen_writelock_ptr)         __rv_system_object_writelock_gen_writelock,
         /*.get_type=*/              (__rv_system_object_base_get_type_ptr)              __rv_system_object_writelock_get_type,
         /*.get_type_name=*/         (__rv_system_object_base_get_type_name_ptr)         __rv_system_object_writelock_get_type_name,
         /*.get_all_type_names=*/    (__rv_system_object_base_get_all_type_names_ptr)    __rv_system_object_writelock_get_all_type_names,
         /*.get size=*/              (__rv_system_object_base_get_size_ptr)              __rv_system_object_writelock_get_size,
         /*.get_type_value=*/        (__rv_system_object_base_get_type_value_ptr)        __rv_system_object_writelock_get_type_value,
-        /*.is_type=*/               (__rv_system_object_base_is_type_ptr)               __rv_system_object_writelock_is_type
+        /*.is_type=*/               (__rv_system_object_base_is_type_ptr)               __rv_system_object_writelock_is_type,
+        /*.link=*/                  (__rv_system_object_base_link_ptr)                  __rv_system_object_writelock_link
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -365,6 +369,60 @@
                 return 1;
         //test this object
             return ctype == (char *)rv_system_object_type__object_writelock;
+        }
+
+    //link object to this object, used for linking refs and locks
+        bool __rv_system_object_writelock_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        )
+        {
+            struct rv_system_object_s *o;
+            struct rv_system_object_ref_s *r;
+            struct rv_system_object_writelock_s *t;
+        //get this object
+            if( !p_link->vtble->get_type( p_link, p_link->top, (void **)&t, rv_system_object_type__object_writelock ) )
+                return 0;
+        //convert to object
+            if( p_link->vtble->get_type( p_link, p_link->top, (void **)&o, rv_system_object_type__object ) )
+            {
+                t->obj = o;
+                return t->obj != 0;
+            }
+        //convert to ref and fetch object
+            if( p_link->vtble->get_type( p_link, p_link->top, (void **)&r, rv_system_object_type__object_ref ) )
+            {
+                struct rv_system_rwlock_holder_s rwlh;
+            //lock ref
+                if( !rv_system_rwlock_holder_create_static( &rwlh, sizeof( rwlh ) ) )
+                    return 0;
+            //be sure to unlock
+                do
+                {
+                //add
+                    if( !rv_system_rwlock_holder_add( &rwlh, &r->rwl, 0 ) )
+                        continue;
+                //lock
+                    if( !rv_system_rwlock_holder_lock( &rwlh, is_blocking, timeout_ms, 1 ) )
+                        continue;
+                //get object
+                    t->obj = r->obj;
+                }
+                while( 0 );
+            //unlock ref
+                rv_system_rwlock_holder_destroy_static( &rwlh );
+            //return
+                return t->obj != 0;
+            }
+        //failed
+            return 0;
         }
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
