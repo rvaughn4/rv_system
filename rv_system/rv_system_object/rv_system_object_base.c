@@ -445,6 +445,22 @@
             return (char *)ctype == (char *)rv_system_object_type__object_base;
         }
 
+    //link object to this object, used for linking refs and locks
+        bool __rv_system_object_base_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        )
+        {
+            return 0;
+        }
+
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 
     //helper function that actually does work behind get_type_name function

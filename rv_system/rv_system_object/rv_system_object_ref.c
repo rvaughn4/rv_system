@@ -206,6 +206,9 @@
                 if( !p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_ref ) )
                     continue;
                 po->obj = 0;
+            //init rwlock
+                if( !rv_system_rwlock_create_static( &po->rwl, sizeof( po->rwl ) ) )
+                    return 0;
             //return success
                 return 1;
             }
@@ -225,9 +228,13 @@
         )
         {
             struct rv_system_object_ref_s *po;
-        //deinit this object - nothing todo
+        //deinit this object
             if( p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_ref ) )
+            {
                 po->obj = 0;
+            //deinit rwlock
+                rv_system_rwlock_destroy_static( &po->rwl );
+            }
         //deinit super
             __rv_system_object_base_deinit( p_base, top );
         }

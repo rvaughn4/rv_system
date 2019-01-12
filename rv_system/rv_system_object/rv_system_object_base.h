@@ -164,6 +164,19 @@
             char *ctype
         );
 
+    //link object to this object, used for linking refs and locks
+        typedef bool (* __rv_system_object_base_link_ptr)
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        );
+
     //vtble
         struct rv_system_object_base_vtble_s
         {
@@ -189,6 +202,8 @@
             __rv_system_object_base_get_type_value_ptr        get_type_value;
         //is type
             __rv_system_object_base_is_type_ptr               is_type;
+        //link
+            __rv_system_object_base_link_ptr                  link;
         };
         struct rv_system_object_base_vtble_s rv_system_object_base_vtble;
 
@@ -542,6 +557,19 @@
             void                                *top,
         //string type name
             char *ctype
+        );
+
+    //link object to this object, used for linking refs and locks
+        bool __rv_system_object_base_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
         );
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */

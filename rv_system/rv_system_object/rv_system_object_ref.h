@@ -15,6 +15,8 @@
 
     //object base
         #include "rv_system_object_base.h"
+    //rwlock
+        #include "../rv_system_rwlock/rv_system_rwlock.h"
 
 /* ------------------- structure stubs --------------------------------------- */
 
@@ -33,6 +35,8 @@
             struct rv_system_object_base_s base;
         //object
             struct rv_system_object_s *obj;
+        //rwlock
+            struct rv_system_rwlock_s rwl;
         };
 
 /* ------------------- static function stubs --------------------------------- */
