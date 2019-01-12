@@ -29,18 +29,19 @@
 
         struct rv_system_object_base_vtble_s rv_system_object_readlock_vtble =
         {
-        /*.init=*/                  (__rv_system_object_base_init_ptr)                  __rv_system_object_readlock_init,
-        /*.deinit=*/                (__rv_system_object_base_deinit_ptr)                __rv_system_object_readlock_deinit,
-        /*.gen_ref=*/               (__rv_system_object_base_gen_ref_ptr)               __rv_system_object_readlock_gen_ref,
-        /*.gen_readlock=*/          (__rv_system_object_base_gen_readlock_ptr)          __rv_system_object_readlock_gen_readlock,
-        /*.gen_writelock=*/         (__rv_system_object_base_gen_writelock_ptr)         __rv_system_object_readlock_gen_writelock,
-        /*.get_type=*/              (__rv_system_object_base_get_type_ptr)              __rv_system_object_readlock_get_type,
-        /*.get_type_name=*/         (__rv_system_object_base_get_type_name_ptr)         __rv_system_object_readlock_get_type_name,
-        /*.get_all_type_names=*/    (__rv_system_object_base_get_all_type_names_ptr)    __rv_system_object_readlock_get_all_type_names,
-        /*.get size=*/              (__rv_system_object_base_get_size_ptr)              __rv_system_object_readlock_get_size,
-        /*.get_type_value=*/        (__rv_system_object_base_get_type_value_ptr)        __rv_system_object_readlock_get_type_value,
-        /*.is_type=*/               (__rv_system_object_base_is_type_ptr)               __rv_system_object_readlock_is_type,
-        /*.link=*/                  (__rv_system_object_base_link_ptr)                  __rv_system_object_readlock_link
+        /*.init=*/                  __rv_system_object_readlock_init,
+        /*.deinit=*/                __rv_system_object_readlock_deinit,
+        /*.gen_ref=*/               __rv_system_object_readlock_gen_ref,
+        /*.gen_readlock=*/          __rv_system_object_readlock_gen_readlock,
+        /*.gen_writelock=*/         __rv_system_object_readlock_gen_writelock,
+        /*.get_type=*/              __rv_system_object_readlock_get_type,
+        /*.get_type_name=*/         __rv_system_object_readlock_get_type_name,
+        /*.get_all_type_names=*/    __rv_system_object_readlock_get_all_type_names,
+        /*.get size=*/              __rv_system_object_readlock_get_size,
+        /*.get_type_value=*/        __rv_system_object_readlock_get_type_value,
+        /*.is_type=*/               __rv_system_object_readlock_is_type,
+        /*.link=*/                  __rv_system_object_readlock_link,
+        /*.unlink=*/                __rv_system_object_readlock_unlink
         };
 
 /* -------- structures containing easy function pointers --------------------- */
