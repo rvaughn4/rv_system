@@ -38,7 +38,9 @@
         /*.get_all_type_names=*/    (__rv_system_object_base_get_all_type_names_ptr)    __rv_system_object_base_get_all_type_names,
         /*.get size=*/              (__rv_system_object_base_get_size_ptr)              __rv_system_object_base_get_size,
         /*.get_type_value=*/        (__rv_system_object_base_get_type_value_ptr)        __rv_system_object_base_get_type_value,
-        /*.is_type=*/               (__rv_system_object_base_is_type_ptr)               __rv_system_object_base_is_type
+        /*.is_type=*/               (__rv_system_object_base_is_type_ptr)               __rv_system_object_base_is_type,
+        /*.link=*/                  (__rv_system_object_base_link_ptr)                  __rv_system_object_base_link,
+        /*.unlink=*/                (__rv_system_object_base_unlink_ptr)                __rv_system_object_base_unlink
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -447,6 +449,22 @@
 
     //link object to this object, used for linking refs and locks
         bool __rv_system_object_base_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        )
+        {
+            return 0;
+        }
+
+    //unlink object to this object
+        bool __rv_system_object_base_unlink
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,

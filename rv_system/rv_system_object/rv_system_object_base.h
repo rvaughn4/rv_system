@@ -177,6 +177,19 @@
             uint64_t                            timeout_ms
         );
 
+    //unlink object to this object
+        typedef bool (* __rv_system_object_base_unlink_ptr)
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        );
+
     //vtble
         struct rv_system_object_base_vtble_s
         {
@@ -204,6 +217,8 @@
             __rv_system_object_base_is_type_ptr               is_type;
         //link
             __rv_system_object_base_link_ptr                  link;
+        //unlink
+            __rv_system_object_base_unlink_ptr                unlink;
         };
         struct rv_system_object_base_vtble_s rv_system_object_base_vtble;
 
@@ -561,6 +576,19 @@
 
     //link object to this object, used for linking refs and locks
         bool __rv_system_object_base_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        );
+
+    //unlink object to this object
+        bool __rv_system_object_base_unlink
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
