@@ -28,13 +28,18 @@
 
 /* ------------------- structure definition ---------------------------------- */
 
-    //object base
+    //object
+        #define rv_system_object__refs_max 3
         struct rv_system_object_s
         {
         //super
             struct rv_system_object_base_s      base;
         //rwlock
             struct rv_system_rwlock_s           rwl;
+        //refs
+            struct rv_system_object_base_s      *first_refs[ rv_system_object__refs_max ];
+            uint16_t                            cnt_refs;
+            struct rv_system_object_base_s      **refs;
         };
 
 /* ------------------- static function stubs --------------------------------- */
@@ -279,9 +284,39 @@
             char *ctype
         );
 
-/* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
+/* -------- helper functions  --------------------- */
 
-    //none
+    //reset/init original ref list
+        void __rv_system_object_reset_ref_list
+        (
+            struct rv_system_object_s   *t
+        );
+
+    //destroy ref list
+        void __rv_system_object_destroy_ref_list
+        (
+            struct rv_system_object_s   *t
+        );
+
+    //unlink all refs on list
+        void __rv_system_object_unlink_all
+        (
+            struct rv_system_object_s   *t
+        );
+
+    //resize ref list
+        bool __rv_system_object_resize_ref_list
+        (
+            struct rv_system_object_s   *t
+        );
+
+    //add ref to list
+        bool __rv_system_object_add_ref_list
+        (
+            struct rv_system_object_s       *t,
+        //ref
+            struct rv_system_object_base_s  *r
+        );
 
 /* -------- structures containing easy function pointers --------------------- */
 

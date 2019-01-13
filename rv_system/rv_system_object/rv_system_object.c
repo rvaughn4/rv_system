@@ -21,6 +21,9 @@
         #include "rv_system_object_writelock.h"
     //object
         #include "rv_system_object_ref.h"
+    //memory
+        #include "../rv_system_memory/rv_system_memory.h"
+        #include "../rv_system_memory/rv_system_memory_lock.h"
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
@@ -194,6 +197,8 @@
             //get obj
                 if( !p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object ) )
                     continue;
+            //init ref list
+                __rv_system_object_reset_ref_list( po );
             //init rwlock
                 if( !rv_system_rwlock_create_static( &po->rwl, sizeof( po->rwl ) ) )
                     continue;
@@ -217,9 +222,14 @@
         )
         {
             struct rv_system_object_s *po;
-        //destroy lock
+        //get type
             if( p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object ) )
+            {
+            //unlink refs and release list
+                __rv_system_object_destroy_ref_list( po );
+            //destroy lock
                 rv_system_rwlock_destroy_static( &po->rwl );
+            }
         //deinit super
             __rv_system_object_base_deinit( p_base, top );
         }
@@ -366,6 +376,147 @@
         //test this object
             return ctype == (char *)rv_system_object_type__object;
         }
+
+/* -------- helper functions  --------------------- */
+
+    //reset/init original ref list
+        void __rv_system_object_reset_ref_list
+        (
+            struct rv_system_object_s   *t
+        )
+        {
+            uint32_t i;
+        //default list size
+            t->cnt_refs = rv_system_object__refs_max;
+            t->refs = &t->first_refs[ 0 ];
+        //zero it
+            for( i = 0; i < t->cnt_refs; i++ )
+                t->refs[ i ] = 0;
+        };
+
+    //destroy ref list
+        void __rv_system_object_destroy_ref_list
+        (
+            struct rv_system_object_s   *t
+        )
+        {
+        //unlink all
+            __rv_system_object_unlink_all( t );
+        //release memory
+            if( t->refs != &t->first_refs[ 0 ] && t->base.mem )
+            {
+                struct rv_system_memory_lock_s ml;
+                if( rv_system_memory_lock_create_static( &ml, sizeof( ml ) ) )
+                {
+                    if( rv_system_memory_lock_lock( &ml, t->base.mem ) )
+                        rv_system_memory_lock_release( &ml, (void *)t->refs );
+                    rv_system_memory_lock_destroy_static( &ml );
+                }
+            }
+        //reset
+            __rv_system_object_reset_ref_list( t );
+        };
+
+    //unlink all refs on list
+        void __rv_system_object_unlink_all
+        (
+            struct rv_system_object_s   *t
+        )
+        {
+            uint32_t i;
+            struct rv_system_object_base_s *r;
+        //unlink all
+            for( i = 0; i < t->cnt_refs; i++ )
+            {
+                r = t->refs[ i ];
+            //skip nulls
+                if( !r )
+                    continue;
+            //remove to avoid recursive unlink trap
+                t->refs[ i ] = 0;
+            //unlink
+                r->vtble->unlink( r, &t->base, 1, 0 );
+            }
+        };
+
+    //resize ref list
+        bool __rv_system_object_resize_ref_list
+        (
+            struct rv_system_object_s   *t
+        )
+        {
+            struct rv_system_object_base_s **np, **op;
+            uint16_t nsz, osz;
+            struct rv_system_memory_lock_s ml;
+            uint32_t i;
+            bool r = 0;
+        //memory allocator?
+            if( !t->base.mem )
+                return 0;
+        //create lock
+            if( !rv_system_memory_lock_create_static( &ml, sizeof( ml ) ) )
+                return 0;
+        //lock keeper loop
+            do
+            {
+            //lock memory
+                if( !rv_system_memory_lock_lock( &ml, t->base.mem ) )
+                    continue;
+            //copy old
+                op = t->refs;
+                osz = t->cnt_refs;
+            //compute new size
+                nsz = osz * 2;
+                if( nsz < 13 )
+                    nsz = 13;
+            //create new buffer
+                if( !rv_system_memory_lock_allocate( &ml, nsz * sizeof( struct rv_system_object_base_s * ), (void **)&np ) )
+                    continue;
+            //copy old into new
+                for( i = 0; i < nsz; i++ )
+                {
+                    if( i < osz )
+                        np[ i ] = op[ i ];
+                    else
+                        np[ i ] = 0;
+                }
+                t->refs = np;
+                t->cnt_refs = nsz;
+                r = 1;
+            //release old buffer
+                if( op != &t->first_refs[ 0 ] )
+                    rv_system_memory_lock_release( &ml, (void *)op );
+            }
+            while( 0 );
+        //release lock
+            rv_system_memory_lock_destroy_static( &ml );
+        //return result
+            return r;
+        };
+
+    //add ref to list
+        bool __rv_system_object_add_ref_list
+        (
+            struct rv_system_object_s       *t,
+        //ref
+            struct rv_system_object_base_s  *r
+        )
+        {
+            uint32_t i;
+        //find null
+            for( i = 0; i < t->cnt_refs; i++ )
+            {
+            //skip
+                if( t->refs[ i ] )
+                    continue;
+            //set
+                t->refs[ i ] = r;
+            //return success
+                return 1;
+            }
+        //return fail
+            return 0;
+        };
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 
