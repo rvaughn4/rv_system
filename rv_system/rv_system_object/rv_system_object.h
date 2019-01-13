@@ -35,7 +35,7 @@
         //super
             struct rv_system_object_base_s      base;
         //rwlock
-            struct rv_system_rwlock_s           rwl;
+            struct rv_system_rwlock_s           rwl, ref_lk;
         //refs
             struct rv_system_object_base_s      *first_refs[ rv_system_object__refs_max ];
             uint16_t                            cnt_refs;
@@ -284,6 +284,32 @@
             char *ctype
         );
 
+    //link object to this object, used for linking refs and locks
+        bool __rv_system_object_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        );
+
+    //unlink object to this object
+        bool __rv_system_object_unlink
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        );
+
 /* -------- helper functions  --------------------- */
 
     //reset/init original ref list
@@ -312,6 +338,22 @@
 
     //add ref to list
         bool __rv_system_object_add_ref_list
+        (
+            struct rv_system_object_s       *t,
+        //ref
+            struct rv_system_object_base_s  *r
+        );
+
+    //remove ref from list
+        bool __rv_system_object_remove_ref_list
+        (
+            struct rv_system_object_s       *t,
+        //ref
+            struct rv_system_object_base_s  *r
+        );
+
+    //test ref on list
+        bool __rv_system_object_on_ref_list
         (
             struct rv_system_object_s       *t,
         //ref

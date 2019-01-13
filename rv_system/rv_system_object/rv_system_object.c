@@ -24,22 +24,25 @@
     //memory
         #include "../rv_system_memory/rv_system_memory.h"
         #include "../rv_system_memory/rv_system_memory_lock.h"
+    //rwl
+        #include "../rv_system_rwlock/rv_system_rwlock.h"
+        #include "../rv_system_rwlock/rv_system_rwlock_holder.h"
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
         struct rv_system_object_base_vtble_s rv_system_object_vtble =
         {
-        /*.init=*/                  (__rv_system_object_base_init_ptr)                  __rv_system_object_init,
-        /*.deinit=*/                (__rv_system_object_base_deinit_ptr)                __rv_system_object_deinit,
-        /*.gen_ref=*/               (__rv_system_object_base_gen_ref_ptr)               __rv_system_object_gen_ref,
-        /*.gen_readlock=*/          (__rv_system_object_base_gen_readlock_ptr)          __rv_system_object_gen_readlock,
-        /*.gen_writelock=*/         (__rv_system_object_base_gen_writelock_ptr)         __rv_system_object_gen_writelock,
-        /*.get_type=*/              (__rv_system_object_base_get_type_ptr)              __rv_system_object_get_type,
-        /*.get_type_name=*/         (__rv_system_object_base_get_type_name_ptr)         __rv_system_object_get_type_name,
-        /*.get_all_type_names=*/    (__rv_system_object_base_get_all_type_names_ptr)    __rv_system_object_get_all_type_names,
-        /*.get size=*/              (__rv_system_object_base_get_size_ptr)              __rv_system_object_get_size,
-        /*.get_type_value=*/        (__rv_system_object_base_get_type_value_ptr)        __rv_system_object_get_type_value,
-        /*.is_type=*/               (__rv_system_object_base_is_type_ptr)               __rv_system_object_is_type
+        /*.init=*/                  __rv_system_object_init,
+        /*.deinit=*/                __rv_system_object_deinit,
+        /*.gen_ref=*/               __rv_system_object_gen_ref,
+        /*.gen_readlock=*/          __rv_system_object_gen_readlock,
+        /*.gen_writelock=*/         __rv_system_object_gen_writelock,
+        /*.get_type=*/              __rv_system_object_get_type,
+        /*.get_type_name=*/         __rv_system_object_get_type_name,
+        /*.get_all_type_names=*/    __rv_system_object_get_all_type_names,
+        /*.get size=*/              __rv_system_object_get_size,
+        /*.get_type_value=*/        __rv_system_object_get_type_value,
+        /*.is_type=*/               __rv_system_object_is_type
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -377,6 +380,109 @@
             return ctype == (char *)rv_system_object_type__object;
         }
 
+    //link object to this object, used for linking refs and locks
+        bool __rv_system_object_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        )
+        {
+            struct rv_system_rwlock_holder_s lh;
+            struct rv_system_object_s *t;
+            bool s = 0;
+        //get object
+            if( !p_base->vtble->get_type( p_base, p_base->top, (void **)&t, rv_system_object_type__object ) )
+                return 0;
+        //init lock
+            if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
+                return 0;
+        //lock guard loop
+            do
+            {
+            //attempt to lock
+                if( !rv_system_rwlock_holder_add( &lh, &t->ref_lk, 1 ) )
+                    continue;
+                if( !rv_system_rwlock_holder_lock( &lh, is_blocking, timeout_ms, 1 ) )
+                    continue;
+            //make sure not already linked
+                if( __rv_system_object_on_ref_list( t, p_link ) )
+                {
+                    s = 1;
+                    continue;
+                }
+            //attempt to add without resize
+                if( __rv_system_object_add_ref_list( t, p_link ) )
+                {
+                    s = 1;
+                    continue;
+                }
+            //failed? attempt resize
+                if( !__rv_system_object_resize_ref_list( t ) )
+                    continue;
+            //attempt to add again
+                if( __rv_system_object_add_ref_list( t, p_link ) )
+                    s = 1;
+            }
+            while( 0 );
+        //release lock
+            rv_system_rwlock_holder_destroy_static( &lh );
+        //link
+            if( s && p_link )
+                p_link->vtble->link( p_link, p_base, is_blocking, timeout_ms );
+        //return status
+            return s;
+        }
+
+    //unlink object to this object
+        bool __rv_system_object_unlink
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to object base to link
+            struct rv_system_object_base_s      *p_link,
+        //should we block if locking is required?
+            bool                                is_blocking,
+        //how long should we wait in ms if not blocking before we stop trying to link
+            uint64_t                            timeout_ms
+        )
+        {
+            struct rv_system_rwlock_holder_s lh;
+            struct rv_system_object_s *t;
+            bool s = 0;
+        //get object
+            if( !p_base->vtble->get_type( p_base, p_base->top, (void **)&t, rv_system_object_type__object ) )
+                return 0;
+        //init lock
+            if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
+                return 0;
+        //lock guard loop
+            do
+            {
+            //attempt to lock
+                if( !rv_system_rwlock_holder_add( &lh, &t->ref_lk, 1 ) )
+                    continue;
+                if( !rv_system_rwlock_holder_lock( &lh, is_blocking, timeout_ms, 1 ) )
+                    continue;
+            //attempt to add again
+                if( __rv_system_object_remove_ref_list( t, p_link ) )
+                    s = 1;
+            }
+            while( 0 );
+        //release lock
+            rv_system_rwlock_holder_destroy_static( &lh );
+        //unlink
+            if( s && p_link )
+                p_link->vtble->unlink( p_link, p_base, is_blocking, timeout_ms );
+        //return status
+            return s;
+        }
+
 /* -------- helper functions  --------------------- */
 
     //reset/init original ref list
@@ -511,6 +617,52 @@
                     continue;
             //set
                 t->refs[ i ] = r;
+            //return success
+                return 1;
+            }
+        //return fail
+            return 0;
+        };
+
+    //remove ref to list
+        bool __rv_system_object_remove_ref_list
+        (
+            struct rv_system_object_s       *t,
+        //ref
+            struct rv_system_object_base_s  *r
+        )
+        {
+            uint32_t i;
+        //find value
+            for( i = 0; i < t->cnt_refs; i++ )
+            {
+            //skip
+                if( t->refs[ i ] != r )
+                    continue;
+            //set
+                t->refs[ i ] = 0;
+            //return success
+                return 1;
+            }
+        //return fail
+            return 0;
+        };
+
+    //add ref to list
+        bool __rv_system_object_on_ref_list
+        (
+            struct rv_system_object_s       *t,
+        //ref
+            struct rv_system_object_base_s  *r
+        )
+        {
+            uint32_t i;
+        //find null
+            for( i = 0; i < t->cnt_refs; i++ )
+            {
+            //skip
+                if( t->refs[ i ] != r )
+                    continue;
             //return success
                 return 1;
             }
