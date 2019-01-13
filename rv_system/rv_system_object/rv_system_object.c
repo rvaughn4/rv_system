@@ -205,6 +205,12 @@
             //init rwlock
                 if( !rv_system_rwlock_create_static( &po->rwl, sizeof( po->rwl ) ) )
                     continue;
+            //init rwlock
+                if( !rv_system_rwlock_create_static( &po->ref_lk, sizeof( po->ref_lk ) ) )
+                {
+                    rv_system_rwlock_destroy_static( &po->rwl );
+                    continue;
+                }
             //return success
                 return 1;
             }
@@ -229,9 +235,13 @@
             if( p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object ) )
             {
             //unlink refs and release list
-                __rv_system_object_destroy_ref_list( po );
+                __rv_system_object_unlink_all( po );
             //destroy lock
                 rv_system_rwlock_destroy_static( &po->rwl );
+            //destroy lock
+                rv_system_rwlock_destroy_static( &po->ref_lk );
+            //unlink refs and release list
+                __rv_system_object_destroy_ref_list( po );
             }
         //deinit super
             __rv_system_object_base_deinit( p_base, top );
