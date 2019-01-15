@@ -24,6 +24,8 @@
         #include "rv_system_rwlock/rv_system_rwlock.test.h"
     //memory
         #include "rv_system_memory/rv_system_memory.test.h"
+    //object
+        #include "rv_system_object/rv_system_object.test.h"
 
 /* ------------------- static function stubs --------------------------------- */
 
@@ -51,6 +53,8 @@
                     continue;
             //memory
                 b &= rv_system_memory_test( verbose );
+            //object
+                b &= rv_system_object_test( verbose );
             }
             while( 0 );
         //print result
