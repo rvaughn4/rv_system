@@ -40,7 +40,7 @@
         struct rv_system_memory_s;
     //memory lock
         struct rv_system_memory_lock_s;
-
+        struct rv_system_rwlock_s;
     #define rv_system_object_type__object_base "rv_system_object_type__object_base"
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
@@ -58,9 +58,7 @@
         typedef void (* __rv_system_object_base_deinit_ptr)
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         );
 
     //gen ref function, returns false if fails
@@ -68,8 +66,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive ref
             struct rv_system_object_ref_s       **pp
         );
@@ -79,8 +75,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive readlock
             struct rv_system_object_readlock_s **pp
         );
@@ -90,8 +84,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive writelock
             struct rv_system_object_writelock_s **pp
         );
@@ -101,8 +93,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive object of type
             void **pp,
         //string name of type to fetch
@@ -114,8 +104,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size of buffer
@@ -127,8 +115,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size to buffer
@@ -139,18 +125,14 @@
         typedef uint64_t (* __rv_system_object_base_get_size_ptr)
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         );
 
     //get type function
         typedef char *(* __rv_system_object_base_get_type_value_ptr)
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         );
 
     //test type function, returns true if object is of that type
@@ -158,8 +140,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //string type name
             char *ctype
         );
@@ -188,6 +168,13 @@
             bool                                is_blocking,
         //how long should we wait in ms if not blocking before we stop trying to link
             uint64_t                            timeout_ms
+        );
+
+    //returns pointer to rwl for object
+        typedef struct rv_system_rwlock_s *(* __rv_system_object_base_get_rwl_ptr)
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
         );
 
     //vtble
@@ -219,6 +206,8 @@
             __rv_system_object_base_link_ptr                  link;
         //unlink
             __rv_system_object_base_unlink_ptr                unlink;
+        //get_rwl
+            __rv_system_object_base_get_rwl_ptr               get_rwl;
         };
         struct rv_system_object_base_vtble_s rv_system_object_base_vtble;
 
@@ -468,9 +457,7 @@
         void __rv_system_object_base_deinit
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         );
 
     //gen ref function, returns false if fails
@@ -478,8 +465,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive ref
             struct rv_system_object_ref_s       **pp
         );
@@ -489,8 +474,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive readlock
             struct rv_system_object_readlock_s **pp
         );
@@ -500,8 +483,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive writelock
             struct rv_system_object_writelock_s **pp
         );
@@ -511,8 +492,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive object of type
             void **pp,
         //string name of type to fetch
@@ -524,8 +503,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size of buffer
@@ -537,8 +514,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size to buffer
@@ -549,18 +524,14 @@
         uint64_t __rv_system_object_base_get_size
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         );
 
     //get type function
         char *__rv_system_object_base_get_type_value
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         );
 
     //test type function, returns true if object is of that type
@@ -568,8 +539,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //string type name
             char *ctype
         );
@@ -600,6 +569,13 @@
             uint64_t                            timeout_ms
         );
 
+    //returns pointer to rwl for object
+        struct rv_system_rwlock_s *__rv_system_object_base_get_rwl
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        );
+
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 
     //helper function that actually does work behind get_type_name function
@@ -618,16 +594,12 @@
         (
         //pointer to object base
             struct rv_system_object_base_s          *p_base,
-        //pointer to top level object, inherits base object
-            void                                    *top,
         //buffer to hold name
             char                                    *pb,
         //size to buffer
             uint16_t                                szb,
         //parent vtble
-            struct rv_system_object_base_vtble_s    *next_vtble,
-        //parent object pointer
-            void                                    *next_object
+            struct rv_system_object_base_vtble_s    *next_vtble
         );
 
 /* -------- structures containing easy function pointers --------------------- */

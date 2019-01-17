@@ -172,9 +172,9 @@
         //create 3 refs
             if( verbose )
                 fprintf( stdout, "\t\tCreating refs...\r\n" );
-            b = obj->vtble->gen_ref( obj, obj->top, &r0 );
-            b &= obj->vtble->gen_ref( obj, obj->top, &r1 );
-            b &= obj->vtble->gen_ref( obj, obj->top, &r2 );
+            b = obj->vtble->gen_ref( obj, &r0 );
+            b &= obj->vtble->gen_ref( obj, &r1 );
+            b &= obj->vtble->gen_ref( obj, &r2 );
             do
             {
             //failed

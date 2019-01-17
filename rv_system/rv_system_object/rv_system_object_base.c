@@ -28,19 +28,20 @@
     //vtble
         struct rv_system_object_base_vtble_s rv_system_object_base_vtble =
         {
-        /*.init=*/                  (__rv_system_object_base_init_ptr)                  __rv_system_object_base_init,
-        /*.deinit=*/                (__rv_system_object_base_deinit_ptr)                __rv_system_object_base_deinit,
-        /*.gen_ref=*/               (__rv_system_object_base_gen_ref_ptr)               __rv_system_object_base_gen_ref,
-        /*.gen_readlock=*/          (__rv_system_object_base_gen_readlock_ptr)          __rv_system_object_base_gen_readlock,
-        /*.gen_writelock=*/         (__rv_system_object_base_gen_writelock_ptr)         __rv_system_object_base_gen_writelock,
-        /*.get_type=*/              (__rv_system_object_base_get_type_ptr)              __rv_system_object_base_get_type,
-        /*.get_type_name=*/         (__rv_system_object_base_get_type_name_ptr)         __rv_system_object_base_get_type_name,
-        /*.get_all_type_names=*/    (__rv_system_object_base_get_all_type_names_ptr)    __rv_system_object_base_get_all_type_names,
-        /*.get size=*/              (__rv_system_object_base_get_size_ptr)              __rv_system_object_base_get_size,
-        /*.get_type_value=*/        (__rv_system_object_base_get_type_value_ptr)        __rv_system_object_base_get_type_value,
-        /*.is_type=*/               (__rv_system_object_base_is_type_ptr)               __rv_system_object_base_is_type,
-        /*.link=*/                  (__rv_system_object_base_link_ptr)                  __rv_system_object_base_link,
-        /*.unlink=*/                (__rv_system_object_base_unlink_ptr)                __rv_system_object_base_unlink
+        /*.init=*/                  __rv_system_object_base_init,
+        /*.deinit=*/                __rv_system_object_base_deinit,
+        /*.gen_ref=*/               __rv_system_object_base_gen_ref,
+        /*.gen_readlock=*/          __rv_system_object_base_gen_readlock,
+        /*.gen_writelock=*/         __rv_system_object_base_gen_writelock,
+        /*.get_type=*/              __rv_system_object_base_get_type,
+        /*.get_type_name=*/         __rv_system_object_base_get_type_name,
+        /*.get_all_type_names=*/    __rv_system_object_base_get_all_type_names,
+        /*.get size=*/              __rv_system_object_base_get_size,
+        /*.get_type_value=*/        __rv_system_object_base_get_type_value,
+        /*.is_type=*/               __rv_system_object_base_is_type,
+        /*.link=*/                  __rv_system_object_base_link,
+        /*.unlink=*/                __rv_system_object_base_unlink,
+        /*.get_rwl=*/               __rv_system_object_base_get_rwl
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -48,17 +49,17 @@
     //contains methods
         struct rv_system_object_base_ptr_s rv_system_object_base =
         {
-        /*.create_static=*/         (rv_system_object_base_create_static_ptr)           rv_system_object_base_create_static,
-        /*.create_super_static*/    (rv_system_object_base_create_super_static_ptr)     rv_system_object_base_create_super_static,
-        /*.create*/                 (rv_system_object_base_create_ptr)                  rv_system_object_base_create,
-        /*.create_super*/           (rv_system_object_base_create_super_ptr)            rv_system_object_base_create_super,
-        /*.destroy*/                (rv_system_object_base_destroy_ptr)                 rv_system_object_base_destroy,
-        /*.get_type*/               (rv_system_object_base_get_type_ptr)                rv_system_object_base_get_type,
-        /*.get_type_name*/          (rv_system_object_base_get_type_name_ptr)           rv_system_object_base_get_type_name,
-        /*.get_all_type_names*/     (rv_system_object_base_get_all_type_names_ptr)      rv_system_object_base_get_all_type_names,
-        /*.get_size*/               (rv_system_object_base_get_size_ptr)                rv_system_object_base_get_size,
-        /*.get_type_value*/         (rv_system_object_base_get_type_value_ptr)          rv_system_object_base_get_type_value,
-        /*.is_type*/                (rv_system_object_base_is_type_ptr)                 rv_system_object_base_is_type
+        /*.create_static=*/         rv_system_object_base_create_static,
+        /*.create_super_static*/    rv_system_object_base_create_super_static,
+        /*.create*/                 rv_system_object_base_create,
+        /*.create_super*/           rv_system_object_base_create_super,
+        /*.destroy*/                rv_system_object_base_destroy,
+        /*.get_type*/               rv_system_object_base_get_type,
+        /*.get_type_name*/          rv_system_object_base_get_type_name,
+        /*.get_all_type_names*/     rv_system_object_base_get_all_type_names,
+        /*.get_size*/               rv_system_object_base_get_size,
+        /*.get_type_value*/         rv_system_object_base_get_type_value,
+        /*.is_type*/                rv_system_object_base_is_type
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -195,7 +196,7 @@
         {
             struct rv_system_memory_lock_s ml;
         //deinit chain
-            t->vtble->deinit( t, t->top );
+            t->vtble->deinit( t );
         //release memory
             if( t->is_dynamic && rv_system_memory_lock_create_static( &ml, sizeof( ml ) ) )
             {
@@ -222,7 +223,7 @@
             char                                *ctype
         )
         {
-            return t->vtble->get_type( t, t->top, pp, ctype );
+            return t->vtble->get_type( t, pp, ctype );
         }
 
     //rv_system_object_base_get_type_name() copies name of type into buffer
@@ -237,7 +238,7 @@
             uint16_t                            buff_size
         )
         {
-            return t->vtble->get_type_name( t, t->top, buff, buff_size );
+            return t->vtble->get_type_name( t, buff, buff_size );
         }
 
     //rv_system_object_base_get_all_type_names() copies name of all types in this object into buffer
@@ -252,7 +253,7 @@
             uint16_t                            buff_size
         )
         {
-            return t->vtble->get_all_type_names( t, t->top, buff, buff_size );
+            return t->vtble->get_all_type_names( t, buff, buff_size );
         }
 
     //rv_system_object_base_get_size() returns size of this object and all memory used by this object including memory not contained within this object (child objects etc)
@@ -262,7 +263,7 @@
             struct rv_system_object_base_s     *t
         )
         {
-            return t->vtble->get_size( t, t->top );
+            return t->vtble->get_size( t );
         };
 
     //rv_system_object_base_get_type_value() returns string for type name
@@ -272,7 +273,7 @@
             struct rv_system_object_base_s     *t
         )
         {
-            return t->vtble->get_type_value( t, t->top );
+            return t->vtble->get_type_value( t );
         };
 
     //rv_system_object_base_is_type() returns true if type is found in object
@@ -284,7 +285,7 @@
             char                                *ctype
         )
         {
-            return t->vtble->is_type( t, t->top, ctype );
+            return t->vtble->is_type( t, ctype );
         }
 
 /* -- virtual method corresponding static function stubs --------------------- */
@@ -298,6 +299,7 @@
             void                                *top
         )
         {
+            p_base->top = top;
             return 1;
         }
 
@@ -305,9 +307,7 @@
         void __rv_system_object_base_deinit
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         )
         {
 
@@ -318,8 +318,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive ref
             struct rv_system_object_ref_s       **pp
         )
@@ -332,8 +330,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive readlock
             struct rv_system_object_readlock_s **pp
         )
@@ -346,8 +342,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive writelock
             struct rv_system_object_writelock_s **pp
         )
@@ -360,8 +354,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive object of type
             void                                **pp,
         //string name of type to fetch
@@ -382,8 +374,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size of buffer
@@ -398,24 +388,20 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size to buffer
             uint16_t                            szb
         )
         {
-            return __rv_system_object_base_get_all_type_names__helper( p_base, top, pb, szb, 0, 0 );
+            return __rv_system_object_base_get_all_type_names__helper( p_base, pb, szb, 0 );
         }
 
     //get size funcion, returns size of object and all memory owned by object including child objects
         uint64_t __rv_system_object_base_get_size
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         )
         {
             return sizeof( struct rv_system_object_base_s );
@@ -425,9 +411,7 @@
         char *__rv_system_object_base_get_type_value
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         )
         {
             return rv_system_object_type__object_base;
@@ -438,8 +422,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //string type name
             char *ctype
         )
@@ -479,6 +461,16 @@
             return 0;
         }
 
+    //returns pointer to rwl for object
+        struct rv_system_rwlock_s *__rv_system_object_base_get_rwl
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        )
+        {
+            return 0;
+        };
+
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 
     //helper function that actually does work behind get_type_name function
@@ -514,23 +506,19 @@
         (
         //pointer to object base
             struct rv_system_object_base_s          *p_base,
-        //pointer to top level object, inherits base object
-            void                                    *top,
         //buffer to hold name
             char                                    *pb,
         //size to buffer
             uint16_t                                szb,
         //parent vtble
-            struct rv_system_object_base_vtble_s    *next_vtble,
-        //parent object pointer
-            void                                    *next_object
+            struct rv_system_object_base_vtble_s    *next_vtble
         )
         {
             uint32_t c, szr;
             char *npb;
         //get this type name
-            c = p_base->vtble->get_type_name( p_base, top, pb, szb );
-            if( !next_vtble || !next_object )
+            c = p_base->vtble->get_type_name( p_base, pb, szb );
+            if( !next_vtble )
                 return (uint16_t)c;
         //compute offset
             if( c )
@@ -551,7 +539,7 @@
                 npb = 0;
             szr = (uint32_t)szb - c;
         //next name
-            c += next_vtble->get_all_type_names( p_base, next_object, npb, (uint16_t)szr );
+            c += next_vtble->get_all_type_names( p_base, npb, (uint16_t)szr );
         //return size
             return (uint16_t)c;
         }

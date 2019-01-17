@@ -31,9 +31,9 @@
         {
         /*.init=*/                  __rv_system_object_ref_init,
         /*.deinit=*/                __rv_system_object_ref_deinit,
-        /*.gen_ref=*/               __rv_system_object_ref_gen_ref,
-        /*.gen_readlock=*/          __rv_system_object_ref_gen_readlock,
-        /*.gen_writelock=*/         __rv_system_object_ref_gen_writelock,
+        /*.gen_ref=*/               __rv_system_object_base_gen_ref,
+        /*.gen_readlock=*/          __rv_system_object_base_gen_readlock,
+        /*.gen_writelock=*/         __rv_system_object_base_gen_writelock,
         /*.get_type=*/              __rv_system_object_ref_get_type,
         /*.get_type_name=*/         __rv_system_object_ref_get_type_name,
         /*.get_all_type_names=*/    __rv_system_object_ref_get_all_type_names,
@@ -41,7 +41,8 @@
         /*.get_type_value=*/        __rv_system_object_ref_get_type_value,
         /*.is_type=*/               __rv_system_object_ref_is_type,
         /*.link=*/                  __rv_system_object_ref_link,
-        /*.unlink=*/                __rv_system_object_ref_unlink
+        /*.unlink=*/                __rv_system_object_ref_unlink,
+        /*.get_rwl=*/               __rv_system_object_base_get_rwl
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -208,7 +209,7 @@
         //init
             do
             {
-                if( !p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_ref ) )
+                if( !p_base->vtble->get_type( p_base, (void **)&po, rv_system_object_type__object_ref ) )
                     continue;
                 po->obj = 0;
             //init rwlock
@@ -219,7 +220,7 @@
             }
             while( 0 );
         //fail
-            __rv_system_object_base_deinit( p_base, top );
+            __rv_system_object_base_deinit( p_base );
             return 0;
         }
 
@@ -227,72 +228,26 @@
         void __rv_system_object_ref_deinit
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         )
         {
             struct rv_system_object_ref_s *po;
         //deinit this object
-            if( p_base->vtble->get_type( p_base, top, (void **)&po, rv_system_object_type__object_ref ) )
+            if( p_base->vtble->get_type( p_base, (void **)&po, rv_system_object_type__object_ref ) )
             {
                 po->obj = 0;
             //deinit rwlock
                 rv_system_rwlock_destroy_static( &po->rwl );
             }
         //deinit super
-            __rv_system_object_base_deinit( p_base, top );
+            __rv_system_object_base_deinit( p_base );
         }
-
-    //gen ref function, returns false if fails
-        bool __rv_system_object_ref_gen_ref
-        (
-        //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
-        //pointer to receive ref
-            struct rv_system_object_ref_s       **pp
-        )
-        {
-            return 0;
-        };
-
-    //gen readlock function, returns false if fails
-        bool __rv_system_object_ref_gen_readlock
-        (
-        //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
-        //pointer to receive readlock
-            struct rv_system_object_readlock_s **pp
-        )
-        {
-            return 0;
-        };
-
-    //gen writelock function, returns false if fails
-        bool __rv_system_object_ref_gen_writelock
-        (
-        //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
-        //pointer to receive writelock
-            struct rv_system_object_writelock_s **pp
-        )
-        {
-            return 0;
-        };
 
     //get pointer to type function, returns false if not available
         bool __rv_system_object_ref_get_type
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //pointer to receive object of type
             void                                **pp,
         //string name of type to fetch
@@ -300,7 +255,7 @@
         )
         {
         //handle super first
-            if( __rv_system_object_base_get_type( p_base, top, pp, ctype ) )
+            if( __rv_system_object_base_get_type( p_base, pp, ctype ) )
                 return 1;
         //type match?
             if( ctype == (char *)rv_system_object_type__object_ref )
@@ -318,8 +273,6 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size of buffer
@@ -334,24 +287,20 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //buffer to hold name
             char                                *pb,
         //size to buffer
             uint16_t                            szb
         )
         {
-            return __rv_system_object_base_get_all_type_names__helper( p_base, top, pb, szb, &rv_system_object_base_vtble, top );
+            return __rv_system_object_base_get_all_type_names__helper( p_base, pb, szb, &rv_system_object_base_vtble );
         }
 
     //get size funcion, returns size of object and all memory owned by object including child objects
         uint64_t __rv_system_object_ref_get_size
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         )
         {
             return sizeof( struct rv_system_object_ref_s );
@@ -361,9 +310,7 @@
         char *__rv_system_object_ref_get_type_value
         (
         //pointer to object base
-            struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top
+            struct rv_system_object_base_s      *p_base
         )
         {
             return rv_system_object_type__object_ref;
@@ -374,14 +321,12 @@
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base,
-        //pointer to top level object, inherits base object
-            void                                *top,
         //string type name
             char                                *ctype
         )
         {
         //handle super first
-            if( __rv_system_object_base_is_type( p_base, top, ctype ) )
+            if( __rv_system_object_base_is_type( p_base, ctype ) )
                 return 1;
         //test this object
             return ctype == (char *)rv_system_object_type__object_ref;
@@ -405,7 +350,7 @@
             struct rv_system_object_ref_s *t;
             struct rv_system_rwlock_holder_s lh;
         //get this object
-            if( !p_link->vtble->get_type( p_link, p_link->top, (void **)&t, rv_system_object_type__object_ref ) )
+            if( !p_link->vtble->get_type( p_link, (void **)&t, rv_system_object_type__object_ref ) )
                 return 0;
         //already linked
             if( t->obj )
@@ -422,7 +367,7 @@
                 if( !rv_system_rwlock_holder_lock( &lh, is_blocking, timeout_ms, 1 ) )
                     continue;
             //convert to object
-                if( p_link->vtble->get_type( p_link, p_link->top, (void **)&o, rv_system_object_type__object ) )
+                if( p_link->vtble->get_type( p_link, (void **)&o, rv_system_object_type__object ) )
                 {
                 //already linked
                     if( t->obj == o )
@@ -433,7 +378,7 @@
                     continue;
                 }
             //convert to ref and fetch object
-                if( p_link->vtble->get_type( p_link, p_link->top, (void **)&r, rv_system_object_type__object_ref ) )
+                if( p_link->vtble->get_type( p_link, (void **)&r, rv_system_object_type__object_ref ) )
                 {
                     struct rv_system_rwlock_holder_s rwlh;
                 //lock ref
@@ -488,7 +433,7 @@
             struct rv_system_object_ref_s *t;
             struct rv_system_rwlock_holder_s lh;
         //get this object
-            if( !p_link->vtble->get_type( p_link, p_link->top, (void **)&t, rv_system_object_type__object_ref ) )
+            if( !p_link->vtble->get_type( p_link, (void **)&t, rv_system_object_type__object_ref ) )
                 return 0;
         //not linked
             if( !t->obj )
@@ -505,7 +450,7 @@
                 if( !rv_system_rwlock_holder_lock( &lh, is_blocking, timeout_ms, 1 ) )
                     continue;
             //convert to object
-                if( p_link->vtble->get_type( p_link, p_link->top, (void **)&o, rv_system_object_type__object ) )
+                if( p_link->vtble->get_type( p_link, (void **)&o, rv_system_object_type__object ) )
                 {
                     if( t->obj == o )
                         t->obj = 0;
@@ -513,7 +458,7 @@
                     continue;
                 }
             //convert to ref and fetch object
-                if( p_link->vtble->get_type( p_link, p_link->top, (void **)&r, rv_system_object_type__object_ref ) )
+                if( p_link->vtble->get_type( p_link, (void **)&r, rv_system_object_type__object_ref ) )
                 {
                     struct rv_system_rwlock_holder_s rwlh;
                 //lock ref

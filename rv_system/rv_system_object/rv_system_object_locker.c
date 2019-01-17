@@ -108,14 +108,14 @@
                     if( e->is_write )
                     {
                         struct rv_system_object_writelock_s *wl;
-                        o->vtble->gen_writelock( o, o, &wl );
+                        o->vtble->gen_writelock( o, &wl );
                         if( wl )
                             e->l = &wl->base;
                     }
                     else
                     {
                         struct rv_system_object_readlock_s *rl;
-                        o->vtble->gen_readlock( o, o, &rl );
+                        o->vtble->gen_readlock( o, &rl );
                         if( rl )
                             e->l = &rl->base;
                     }
@@ -232,6 +232,9 @@
             {
                 e = &t->entries[ i ];
                 e->is_locked = 0;
+                if( !e->l )
+                    continue;
+                e->l->vtble->unlink( e->l, e->o, 1, 0 );
                 if( !e->d )
                     rv_system_object_base_destroy( e->d );
             }
@@ -313,7 +316,8 @@
             //skip
                 if( e->o != o )
                     continue;
-                e->l->vtble->get_type( e->l, (void *)e->l, pl, ctype );
+                if( pl )
+                    e->l->vtble->get_type( e->l, pl, ctype );
                 return e->is_locked;
             }
         //not found
