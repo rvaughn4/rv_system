@@ -55,17 +55,18 @@
     //contains struct methods
         struct rv_system_memory_lock_ptr_s rv_system_memory_lock =
         {
-            /*.create_static=*/ rv_system_memory_lock_create_static,
-            /*.destroy_static=*/ rv_system_memory_lock_destroy_static,
-            /*.lock=*/ rv_system_memory_lock_lock,
-            /*.unlock=*/ rv_system_memory_lock_unlock,
-            /*.allocate=*/ rv_system_memory_lock_allocate,
-            /*.release=*/ rv_system_memory_lock_release,
-            /*.allocate_raw=*/ rv_system_memory_lock_allocate_raw,
-            /*.release_raw=*/ rv_system_memory_lock_release_raw,
-            /*.print=*/ rv_system_memory_lock_print,
-            /*.get_stats=*/ rv_system_memory_lock_get_stats,
-            /*.print_stats=*/ rv_system_memory_lock_print_stats
+            /*.create_static=*/         rv_system_memory_lock_create_static,
+            /*.destroy_static=*/        rv_system_memory_lock_destroy_static,
+            /*.lock=*/                  rv_system_memory_lock_lock,
+            /*.unlock=*/                rv_system_memory_lock_unlock,
+            /*.allocate=*/              rv_system_memory_lock_allocate,
+            /*.allocate_object=*/       rv_system_memory_lock_allocate_object,
+            /*.release=*/               rv_system_memory_lock_release,
+            /*.allocate_raw=*/          rv_system_memory_lock_allocate_raw,
+            /*.release_raw=*/           rv_system_memory_lock_release_raw,
+            /*.print=*/                 rv_system_memory_lock_print,
+            /*.get_stats=*/             rv_system_memory_lock_get_stats,
+            /*.print_stats=*/           rv_system_memory_lock_print_stats
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -147,6 +148,24 @@
             void                                **pd
         )
         {
+            return rv_system_memory_lock_allocate_object( t, sz, pd, 0, 0 );
+        }
+
+    //rv_system_memory_lock_create_allocate_object() allocates memory from a frame and an allocation
+        bool rv_system_memory_lock_allocate_object
+        (
+        //pointer to memory holding struct
+            struct rv_system_memory_lock_s          *t,
+        //size to allocate
+            uint32_t                                sz,
+        //pointer to start of allocated memory
+            void                                    **pd,
+        //is object
+            bool                                    is_rv_object,
+        //object base offset after start of allocation
+            uint16_t                                offset_object_base
+        )
+        {
             bool r;
         //must be locked
             if( !t->t )
@@ -154,7 +173,7 @@
         //allocate
             if( !t->t->first )
                 return 0;
-            r = rv_system_memory_frame_allocate( t->t->first, sz, pd, t );
+            r = rv_system_memory_frame_allocate( t->t->first, sz, pd, t, is_rv_object, offset_object_base );
             #ifdef rv_system_memory_lock_print_errors
                 if( !r )
                     fprintf( stdout, "Failed allocating memory %u bytes\n", (unsigned int)sz );

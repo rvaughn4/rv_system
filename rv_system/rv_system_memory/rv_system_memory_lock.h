@@ -151,6 +151,34 @@
             void                                **pd
         );
 
+    //rv_system_memory_lock_create_allocate_object() allocates memory from a frame and an allocation
+        bool rv_system_memory_lock_allocate_object
+        (
+        //pointer to memory holding struct
+            struct rv_system_memory_lock_s          *t,
+        //size to allocate
+            uint32_t                                sz,
+        //pointer to start of allocated memory
+            void                                    **pd,
+        //is object
+            bool                                    is_rv_object,
+        //object base offset after start of allocation
+            uint16_t                                offset_object_base
+        );
+        typedef bool (* rv_system_memory_lock_allocate_object_ptr)
+        (
+        //pointer to memory holding struct
+            struct rv_system_memory_lock_s          *t,
+        //size to allocate
+            uint32_t                                sz,
+        //pointer to start of allocated memory
+            void                                    **pd,
+        //is object
+            bool                                    is_rv_object,
+        //object base offset after start of allocation
+            uint16_t                                offset_object_base
+        );
+
     //rv_system_memory_lock_create_release() releases memory from a frame and an allocation
         bool rv_system_memory_lock_release
         (
@@ -271,6 +299,8 @@
             rv_system_memory_lock_unlock_ptr            unlock;
         //allocate
             rv_system_memory_lock_allocate_ptr          allocate;
+        //allocate object
+            rv_system_memory_lock_allocate_object_ptr   allocate_object;
         //release
             rv_system_memory_lock_release_ptr           release;
         //allocate raw

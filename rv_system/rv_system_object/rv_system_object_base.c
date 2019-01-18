@@ -162,19 +162,19 @@
             do
             {
             //allocate memory
-                if( !rv_system_memory_lock_allocate( pml, sz, &r ) )
+                if( !rv_system_memory_lock_allocate_object( pml, sz, &r, 1, base_offset ) )
                     continue;
                 a.r = r;
                 a.l += base_offset;
                 if( !rv_system_object_base_create_super_static( a.t, sz - base_offset, vtble, r, mem ) )
                     continue;
+                a.t->is_dynamic = 1;
             //unlock
                 if( !mem_lock_optional )
                     rv_system_memory_lock_destroy_static( &ml );
             //return success
                 if( pt )
                     *pt = a.t;
-                return r;
             }
             while( 0 );
         //release memory
@@ -184,7 +184,7 @@
             if( !mem_lock_optional )
                 rv_system_memory_lock_destroy_static( &ml );
         //return fail
-            return 0;
+            return r;
         }
 
     //rv_system_object_base_destroy() releases resources in struct, releases struct memory if was allocated dynamically

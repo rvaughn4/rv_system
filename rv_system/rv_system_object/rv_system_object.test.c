@@ -83,7 +83,7 @@
                 do
                 {
                 //test object
-                    b = rv_system_object_test_object( verbose, 0, &obj->base );
+                    b = rv_system_object_test_object( verbose, 0, &obj->base, &m, &ml );
                     if( !b )
                         continue;
                 }
@@ -91,6 +91,13 @@
                 rv_system_object_base_destroy( &obj->base );
             }
             while( 0 );
+
+if( rv_system_memory_lock_lock( &ml, &m ) )
+{
+    rv_system_memory_lock_print( &ml );
+    rv_system_memory_lock_unlock( &ml );
+}
+
             rv_system_memory_lock_destroy_static( &ml );
             rv_system_memory_destroy_static( &m );
             if( !b )
@@ -111,7 +118,11 @@
         //when false, will use local stack allocated locks, when true object will generate locks
             bool useGenLocks,
         //object to run tests on
-            struct rv_system_object_base_s *obj
+            struct rv_system_object_base_s *obj,
+        //memory
+            struct rv_system_memory_s *mem,
+        //memory lock
+            struct rv_system_memory_lock_s *meml
         )
         {
             return 1;
@@ -125,7 +136,11 @@
         //when false, will use local stack allocated locks, when true object will generate locks
             bool useGenLocks,
         //object to run tests on
-            struct rv_system_object_base_s *obj
+            struct rv_system_object_base_s *obj,
+        //memory
+            struct rv_system_memory_s *mem,
+        //memory lock
+            struct rv_system_memory_lock_s *meml
         )
         {
             bool b;
@@ -135,7 +150,7 @@
             if( verbose )
                 fprintf( stdout, "\tTesting object by locking and creating refs...\r\n" );
         //run locking test on object itself
-            if( !rv_system_object_test_locking( 1, useGenLocks, obj ) )
+            if( !rv_system_object_test_locking( 1, useGenLocks, obj, mem, meml ) )
             {
                 fprintf( stderr, "\tTesting object by locking and creating refs...FAILED\r\n" );
                 return 0;
@@ -185,12 +200,19 @@
                 }
                 if( verbose )
                     fprintf( stdout, "\t\tCreating refs...SUCCEEDED\r\n" );
+
+if( rv_system_memory_lock_lock( meml, mem ) )
+{
+    rv_system_memory_lock_print( meml );
+    rv_system_memory_lock_unlock( meml );
+}
+
             //test locking on ref
                 if( verbose )
                     fprintf( stdout, "\t\tTesting refs...\r\n" );
-                b = rv_system_object_test_locking( 1, useGenLocks, &r0->base );
-                b &= rv_system_object_test_locking( 1, useGenLocks, &r1->base );
-                b &= rv_system_object_test_locking( 1, useGenLocks, &r2->base );
+                b = rv_system_object_test_locking( 1, useGenLocks, &r0->base, mem, meml );
+                b &= rv_system_object_test_locking( 1, useGenLocks, &r1->base, mem, meml );
+                b &= rv_system_object_test_locking( 1, useGenLocks, &r2->base, mem, meml );
                 if( !b )
                 {
                     fprintf( stderr, "\t\tTesting refs...FAILED\r\n" );
@@ -212,6 +234,11 @@
                 fprintf( stderr, "\tTesting object by locking and creating refs...FAILED\r\n" );
                 return 0;
             }
+if( rv_system_memory_lock_lock( meml, mem ) )
+{
+    rv_system_memory_lock_print( meml );
+    rv_system_memory_lock_unlock( meml );
+}
 
             fprintf( stderr, "\tTesting object by locking and creating refs...SUCCEEDED\r\n" );
             return 1;

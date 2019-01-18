@@ -190,7 +190,11 @@
         //pointer to start of allocated memory
             void                                    **pd,
         //memory lock
-            struct rv_system_memory_lock_s          *ml
+            struct rv_system_memory_lock_s          *ml,
+        //is object
+            bool                                    is_rv_object,
+        //object base offset after start of allocation
+            uint16_t                                offset_object_base
         )
         {
             uint32_t nsz, i;
@@ -201,7 +205,7 @@
                 return 0;
         //allocate from this frame first
             rv_system_memory_frame_get_components( t, &f, &a );
-            if( rv_system_memory_allocation_allocate( a, sz, 0, pd ) )
+            if( rv_system_memory_allocation_allocate( a, sz, 0, pd, is_rv_object, offset_object_base ) )
                 return 1;
         //create next frame
             if( !t->next && ml )
@@ -238,7 +242,7 @@
         //allocate from next frame
             if( !t->next )
                 return 0;
-            return rv_system_memory_frame_allocate( t->next, sz, pd, ml );
+            return rv_system_memory_frame_allocate( t->next, sz, pd, ml, is_rv_object, offset_object_base );
         }
 
     //rv_system_memory_frame_release() releases memory at address

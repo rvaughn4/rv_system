@@ -38,6 +38,8 @@
             #include <stdio.h>
             #include <stdlib.h>
         #endif
+    //object
+        #include "../rv_system_object/rv_system_object_base.h"
 
 /* -------- structures containing easy function pointers --------------------- */
 
@@ -75,12 +77,14 @@
         //init
             t->is_used = 0;
             t->is_followed = 0;
+            t->offset_object_base = 0;
             t->size = sz - sizeof( struct rv_system_memory_allocation_s ) * 2;
         //footer
             rv_system_memory_allocation_get_components( t, &f, 0, 0 );
             f->is_used = 0;
             f->size = t->size;
             f->is_followed = 0;
+            f->offset_object_base = t->offset_object_base;
         //return status
             return rv_system_memory_allocation_validate( t );
         }
@@ -157,6 +161,7 @@
             b = t->is_used == f->is_used;
             b &= t->size == f->size;
             b &= t->is_followed == f->is_followed;
+            b &= t->offset_object_base == f->offset_object_base;
         //return result
             #ifdef rv_system_memory_allocation_print_errors
                 if( !b )
@@ -210,6 +215,7 @@
             tf->size = t->size;
             tf->is_used = t->is_used;
             tf->is_followed = t->is_followed;
+            tf->offset_object_base = t->offset_object_base;
         //init new allocation
             if( !tn )
                 return 0;
@@ -218,6 +224,7 @@
             rv_system_memory_allocation_get_components( tn, &tnf, 0, 0 );
             tnf->is_followed = tn->is_followed = t->is_followed;
             tf->is_followed = t->is_followed = 43;
+            tnf->offset_object_base = tn->offset_object_base = 0;
             #ifdef rv_system_memory_allocation_print_all
                 union
                 {
@@ -248,7 +255,11 @@
         //pointer to actual allocation used
             struct rv_system_memory_allocation_s    **n,
         //pointer to start of allocated memory inside allocation
-            void                                    **pd
+            void                                    **pd,
+        //are we allocating memory for an object?
+            bool                                    is_rwl_object,
+        //offset to object_base from start of allocation
+            uint16_t                                offset_object_base
         )
         {
             struct rv_system_memory_allocation_s *f;
@@ -260,6 +271,11 @@
             {
                 rv_system_memory_allocation_get_components( t, &f, pd, 0 );
                 f->is_used = t->is_used = 43;
+                if( is_rwl_object )
+                    t->offset_object_base = 1 + offset_object_base;
+                else
+                    t->offset_object_base = 0;
+                f->offset_object_base = t->offset_object_base;
                 #ifdef rv_system_memory_allocation_print_all
                     union
                     {
@@ -281,7 +297,7 @@
         //attempt to allocate from next
             rv_system_memory_allocation_get_components( t, 0, 0, &f );
             if( f )
-                return rv_system_memory_allocation_allocate( f, sz, n, pd );
+                return rv_system_memory_allocation_allocate( f, sz, n, pd, is_rwl_object, offset_object_base );
         //return fail
             return 0;
         }
@@ -342,6 +358,7 @@
                     f->is_followed = t->is_followed;
                     f->is_used = t->is_used;
                     f->size = t->size;
+                    f->offset_object_base = t->offset_object_base;
                 }
             }
             if( r )
@@ -383,7 +400,9 @@
                     void            *p;
                     uint32_t        ui32;
                     uint64_t        ui64;
+                    struct rv_system_object_base_s *ob;
                 } u_ptr, u_sz;
+            //used or free and size
                 if( t->is_used )
                     fprintf( stdout, "\t\tUsed " );
                 else
@@ -391,9 +410,18 @@
                 u_ptr.p = (void *)t;
                 u_sz.ui32 = t->size;
                 fprintf( stdout, "Allocation at %u with %u bytes.\n", u_ptr.ui, u_sz.ui );
+            //get next and pointer to object
+                rv_system_memory_allocation_get_components( t, 0, &u_ptr.p, &n );
+            //print object
+                if( t->is_used && t->offset_object_base )
+                {
+                    u_ptr.ui64 += t->offset_object_base - 1;
+                    fprintf( stdout, "\t\t\t%s with size %u\n", rv_system_object_base_get_type_value( u_ptr.ob ), (unsigned int)rv_system_object_base_get_size( u_ptr.ob ) );
+                }
+            #else
+            //get next
+                rv_system_memory_allocation_get_components( t, 0, 0, &n );
             #endif
-        //get next
-            rv_system_memory_allocation_get_components( t, 0, 0, &n );
         //print next
             if( !n )
                 return;

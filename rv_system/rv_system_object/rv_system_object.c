@@ -257,7 +257,11 @@
             struct rv_system_object_ref_s       **pp
         )
         {
-            return rv_system_object_ref_create( p_base->mem, 0 );
+            struct rv_system_object_ref_s *r;
+            r = rv_system_object_ref_create( p_base->mem, 0 );
+            if( pp )
+                *pp = r;
+            return r != 0;
         };
 
     //gen readlock function, returns false if fails

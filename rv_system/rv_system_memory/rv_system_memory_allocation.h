@@ -57,6 +57,8 @@
             uint8_t     is_used;
         //does allocation have another after it
             uint8_t     is_followed;
+        //(offset to object_base+1), is nonzero if offset stored, if zero not an object
+            uint16_t    offset_object_base;
         };
 
 /* ------------------- static function stubs --------------------------------- */
@@ -159,7 +161,11 @@
         //pointer to actual allocation used
             struct rv_system_memory_allocation_s    **n,
         //pointer to start of allocated memory inside allocation
-            void                                    **pd
+            void                                    **pd,
+        //are we allocating memory for an object?
+            bool                                    is_rwl_object,
+        //offset to object_base from start of allocation
+            uint16_t                                offset_object_base
         );
         typedef bool (* rv_system_memory_allocation_allocate_ptr)
         (
@@ -170,7 +176,11 @@
         //pointer to actual allocation used
             struct rv_system_memory_allocation_s    **n,
         //pointer to start of allocated memory inside allocation
-            void                                    **pd
+            void                                    **pd,
+        //are we allocating memory for an object?
+            bool                                    is_rwl_object,
+        //offset to object_base from start of allocation
+            uint16_t                                offset_object_base
         );
 
     //rv_system_memory_allocation_release() finds allocation to release by address.

@@ -17,6 +17,8 @@
     //headers
         #include <stdbool.h>
     struct rv_system_object_base_s;
+    struct rv_system_memory_s;
+    struct rv_system_memory_lock_s;
 
 /* ------------------- static function stubs --------------------------------- */
 
@@ -35,7 +37,11 @@
         //when false, will use local stack allocated locks, when true object will generate locks
             bool useGenLocks,
         //object to run tests on
-            struct rv_system_object_base_s *obj
+            struct rv_system_object_base_s *obj,
+        //memory
+            struct rv_system_memory_s *mem,
+        //memory lock
+            struct rv_system_memory_lock_s *meml
         );
 
     //rv_system_object_test_object will test locking on object provided, then will create refs and test those
@@ -46,7 +52,11 @@
         //when false, will use local stack allocated locks, when true object will generate locks
             bool useGenLocks,
         //object to run tests on
-            struct rv_system_object_base_s *obj
+            struct rv_system_object_base_s *obj,
+        //memory
+            struct rv_system_memory_s *mem,
+        //memory lock
+            struct rv_system_memory_lock_s *meml
         );
 
 //header guard end

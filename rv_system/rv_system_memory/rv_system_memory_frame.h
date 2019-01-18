@@ -137,7 +137,11 @@
         //pointer to start of allocated memory
             void                                    **pd,
         //memory lock
-            struct rv_system_memory_lock_s          *ml
+            struct rv_system_memory_lock_s          *ml,
+        //is object
+            bool                                    is_rv_object,
+        //object base offset after start of allocation
+            uint16_t                                offset_object_base
         );
         typedef bool (* rv_system_memory_frame_allocate_ptr)
         (
@@ -148,7 +152,11 @@
         //pointer to start of allocated memory
             void                                    **pd,
         //memory lock
-            struct rv_system_memory_lock_s          *ml
+            struct rv_system_memory_lock_s          *ml,
+        //is object
+            bool                                    is_rv_object,
+        //object base offset after start of allocation
+            uint16_t                                offset_object_base
         );
 
     //rv_system_memory_frame_release() releases memory at address
