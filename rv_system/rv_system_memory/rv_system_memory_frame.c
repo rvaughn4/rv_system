@@ -45,15 +45,15 @@
     //contains struct methods
         struct rv_system_memory_frame_ptr_s rv_system_memory_frame =
         {
-            /*.create_static=*/ rv_system_memory_frame_create_static,
-            /*.destroy_static=*/ rv_system_memory_frame_destroy_static,
-            /*.get_components=*/ rv_system_memory_frame_get_components,
-            /*.verfiy=*/ rv_system_memory_frame_verify,
-            /*.allocate=*/ rv_system_memory_frame_allocate,
-            /*.release=*/ rv_system_memory_frame_release,
-            /*.compute_size=*/ rv_system_memory_frame_compute_size,
-            /*.print=*/ rv_system_memory_frame_print,
-            /*.get_stats=*/ rv_system_memory_frame_get_stats
+            /*.create_static=*/     rv_system_memory_frame_create_static,
+            /*.destroy_static=*/    rv_system_memory_frame_destroy_static,
+            /*.get_components=*/    rv_system_memory_frame_get_components,
+            /*.verfiy=*/            rv_system_memory_frame_verify,
+            /*.allocate=*/          rv_system_memory_frame_allocate,
+            /*.release=*/           rv_system_memory_frame_release,
+            /*.compute_size=*/      rv_system_memory_frame_compute_size,
+            /*.print=*/             rv_system_memory_frame_print,
+            /*.get_stats=*/         rv_system_memory_frame_get_stats
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -171,7 +171,7 @@
                     } u_ptr, u_sz;
                     u_ptr.p = (void *)t;
                     u_sz.ui32 = t->size;
-                    fprintf( stderr, "Frame at %u validate error with %u bytes\n", u_ptr.ui, u_sz.ui );
+                    fprintf( stderr, "Frame at %X validate error with %u bytes\n", u_ptr.ui, u_sz.ui );
                 }
             #endif
             return b;
@@ -235,7 +235,7 @@
                     } u_ptr, u_sz;
                     u_ptr.p = (void *)nf;
                     u_sz.ui32 = nsz;
-                    fprintf( stdout, "Frame at %u created with %u bytes\n", u_ptr.ui, u_sz.ui );
+                    fprintf( stdout, "Frame at %X created with %u bytes\n", u_ptr.ui, u_sz.ui );
                 #endif
                 f->next = t->next = nf;
             }
@@ -306,7 +306,7 @@
                 } u_ptr, u_sz;
                 u_ptr.p = (void *)t;
                 u_sz.ui32 = t->size;
-                fprintf( stdout, "\tFrame at %u with %u bytes.\n", u_ptr.ui, u_sz.ui );
+                fprintf( stdout, "\tFrame at %X with %u bytes.\n", u_ptr.ui, u_sz.ui );
             #endif
         //get next
             rv_system_memory_frame_get_components( t, 0, &a );

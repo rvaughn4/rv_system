@@ -41,7 +41,8 @@
     //memory lock
         struct rv_system_memory_lock_s;
         struct rv_system_rwlock_s;
-    #define rv_system_object_type__object_base "rv_system_object_type__object_base"
+
+        char *rv_system_object_type__object_base;
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
@@ -442,6 +443,24 @@
             char                                *ctype
         );
 
+    //rv_system_object_base_get_ref() links ref to object
+    //      if *r is null, will create ref and return it
+    //      returns false if failed
+        bool rv_system_object_base_get_ref
+        (
+        //pointer to base
+            struct rv_system_object_base_s      *t,
+        //pointer to receive new ref or holds existing ref to link
+            struct rv_system_object_ref_s       **r
+        );
+        typedef bool (* rv_system_object_base_get_ref_ptr)
+        (
+        //pointer to base
+            struct rv_system_object_base_s      *t,
+        //pointer to receive new ref or holds existing ref to link
+            struct rv_system_object_ref_s       **r
+        );
+
 /* -- virtual method corresponding static function stubs --------------------- */
 
     //init function, returns true if successful
@@ -629,6 +648,8 @@
             rv_system_object_base_get_type_value_ptr            get_type_value;
         //is type
             rv_system_object_base_is_type_ptr                   is_type;
+        //get_ref
+            rv_system_object_base_get_ref_ptr                   get_ref;
         };
         struct rv_system_object_base_ptr_s rv_system_object_base;
 

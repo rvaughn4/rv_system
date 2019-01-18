@@ -20,7 +20,7 @@
 
 /* ------------------- structure stubs --------------------------------------- */
 
-    #define rv_system_object_type__object_ref "rv_system_object_type__object_ref"
+        char *rv_system_object_type__object_ref;// "rv_system_object_type__object_ref"
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 

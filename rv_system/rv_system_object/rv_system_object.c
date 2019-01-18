@@ -28,6 +28,8 @@
         #include "../rv_system_rwlock/rv_system_rwlock.h"
         #include "../rv_system_rwlock/rv_system_rwlock_holder.h"
 
+        char *rv_system_object_type__object = "rv_system_object_type__object";
+
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
         struct rv_system_object_base_vtble_s rv_system_object_vtble =

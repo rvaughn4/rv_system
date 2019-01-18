@@ -18,7 +18,7 @@
 
 /* ------------------- structure stubs --------------------------------------- */
 
-    #define rv_system_object_type__object_writelock "rv_system_object_type__object_writelock"
+        char *rv_system_object_type__object_writelock;// "rv_system_object_type__object_writelock"
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 

@@ -25,6 +25,8 @@
         #include "../rv_system_rwlock/rv_system_rwlock.h"
         #include "../rv_system_rwlock/rv_system_rwlock_holder.h"
 
+        char *rv_system_object_type__object_ref = "rv_system_object_type__object_ref";
+
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
         struct rv_system_object_base_vtble_s rv_system_object_ref_vtble =
@@ -371,7 +373,7 @@
                         continue;
                     t->obj = o;
                 //link
-                    o->base.vtble->link( &o->base, &t->base, is_blocking, timeout_ms );
+                    //o->base.vtble->link( &o->base, &t->base, is_blocking, timeout_ms );
                     continue;
                 }
             //convert to ref and fetch object
@@ -396,7 +398,7 @@
                     //get object
                         t->obj = r->obj;
                     //link
-                        r->obj->base.vtble->link( &r->obj->base, &t->base, is_blocking, timeout_ms );
+                        //r->obj->base.vtble->link( &r->obj->base, &t->base, is_blocking, timeout_ms );
                     }
                     while( 0 );
                 //unlock ref

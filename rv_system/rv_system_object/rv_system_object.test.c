@@ -83,7 +83,7 @@
                 do
                 {
                 //test object
-                    b = rv_system_object_test_object( verbose, 0, &obj->base, &m, &ml );
+                    b = rv_system_object_test_object( verbose, 1, &obj->base, &m, &ml );
                     if( !b )
                         continue;
                 }
@@ -187,9 +187,9 @@ if( rv_system_memory_lock_lock( &ml, &m ) )
         //create 3 refs
             if( verbose )
                 fprintf( stdout, "\t\tCreating refs...\r\n" );
-            b = obj->vtble->gen_ref( obj, &r0 );
-            b &= obj->vtble->gen_ref( obj, &r1 );
-            b &= obj->vtble->gen_ref( obj, &r2 );
+            b = rv_system_object_base_get_ref( obj, &r0 );
+            b &= rv_system_object_base_get_ref( obj, &r1 );
+            b &= rv_system_object_base_get_ref( obj, &r2 );
             do
             {
             //failed

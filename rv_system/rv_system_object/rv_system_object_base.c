@@ -23,6 +23,8 @@
         #include "../rv_system_memory/rv_system_memory.h"
         #include "../rv_system_memory/rv_system_memory_lock.h"
 
+        char *rv_system_object_type__object_base = "rv_system_object_type__object_base";
+
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
     //vtble
@@ -49,17 +51,18 @@
     //contains methods
         struct rv_system_object_base_ptr_s rv_system_object_base =
         {
-        /*.create_static=*/         rv_system_object_base_create_static,
-        /*.create_super_static*/    rv_system_object_base_create_super_static,
-        /*.create*/                 rv_system_object_base_create,
-        /*.create_super*/           rv_system_object_base_create_super,
-        /*.destroy*/                rv_system_object_base_destroy,
-        /*.get_type*/               rv_system_object_base_get_type,
-        /*.get_type_name*/          rv_system_object_base_get_type_name,
-        /*.get_all_type_names*/     rv_system_object_base_get_all_type_names,
-        /*.get_size*/               rv_system_object_base_get_size,
-        /*.get_type_value*/         rv_system_object_base_get_type_value,
-        /*.is_type*/                rv_system_object_base_is_type
+        /*.create_static=*/          rv_system_object_base_create_static,
+        /*.create_super_static=*/    rv_system_object_base_create_super_static,
+        /*.create=*/                 rv_system_object_base_create,
+        /*.create_super=*/           rv_system_object_base_create_super,
+        /*.destroy=*/                rv_system_object_base_destroy,
+        /*.get_type=*/               rv_system_object_base_get_type,
+        /*.get_type_name=*/          rv_system_object_base_get_type_name,
+        /*.get_all_type_names=*/     rv_system_object_base_get_all_type_names,
+        /*.get_size=*/               rv_system_object_base_get_size,
+        /*.get_type_value=*/         rv_system_object_base_get_type_value,
+        /*.is_type=*/                rv_system_object_base_is_type,
+        /*.get_ref=*/                rv_system_object_base_get_ref
         };
 
 /* ------------------- static function definitions --------------------------------- */
@@ -287,6 +290,40 @@
         {
             return t->vtble->is_type( t, ctype );
         }
+
+    //rv_system_object_base_get_ref() links ref to object
+    //      if *r is null, will create ref and return it
+    //      returns false if failed
+        bool rv_system_object_base_get_ref
+        (
+        //pointer to base
+            struct rv_system_object_base_s      *t,
+        //pointer to receive new ref or holds existing ref to link
+            struct rv_system_object_ref_s       **r
+        )
+        {
+            struct rv_system_object_ref_s *f;
+        //do we have ref?
+            if( !r )
+                return 0;
+            f = *r;
+        //create ref
+            if( !f )
+            {
+                if( !t->vtble->gen_ref( t, &f ) )
+                    return 0;
+            }
+        //link ref
+            if( !f->base.vtble->link( &f->base, t, 1, 0 ) )
+            {
+                if( !*r )
+                    rv_system_object_base_destroy( &f->base );
+                return 0;
+            }
+        //return pointer
+            *r = f;
+            return 1;
+        };
 
 /* -- virtual method corresponding static function stubs --------------------- */
 

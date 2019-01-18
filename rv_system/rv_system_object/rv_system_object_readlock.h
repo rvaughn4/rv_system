@@ -18,7 +18,7 @@
 
 /* ------------------- structure stubs --------------------------------------- */
 
-    #define rv_system_object_type__object_readlock "rv_system_object_type__object_readlock"
+        char *rv_system_object_type__object_readlock;// "rv_system_object_type__object_readlock"
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 

@@ -4,7 +4,7 @@
 	<Project>
 		<Option title="rv_system" />
 		<Option pch_mode="2" />
-		<Option compiler="tcc" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/rv_system" prefix_auto="1" extension_auto="1" />
@@ -22,7 +22,7 @@
 				<Option output="bin/Release/rv_system" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
-				<Option compiler="tcc" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>

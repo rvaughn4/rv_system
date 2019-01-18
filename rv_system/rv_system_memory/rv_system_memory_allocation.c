@@ -46,16 +46,16 @@
     //contains struct methods
         struct rv_system_memory_allocation_ptr_s rv_system_memory_allocation =
         {
-            /*.create_static=*/ rv_system_memory_allocation_create_static,
-            /*.destroy_static=*/ rv_system_memory_allocation_destroy_static,
-            /*.get_components=*/ rv_system_memory_allocation_get_components,
-            /*.validate=*/ rv_system_memory_allocation_validate,
-            /*.split=*/ rv_system_memory_allocation_split,
-            /*.allocate=*/ rv_system_memory_allocation_allocate,
-            /*.release=*/ rv_system_memory_allocation_release,
-            /*.compute_size=*/ rv_system_memory_allocation_compute_size,
-            /*.print=*/ rv_system_memory_allocation_print,
-            /*.get_stats=*/ rv_system_memory_allocation_get_stats
+            /*.create_static=*/     rv_system_memory_allocation_create_static,
+            /*.destroy_static=*/    rv_system_memory_allocation_destroy_static,
+            /*.get_components=*/    rv_system_memory_allocation_get_components,
+            /*.validate=*/          rv_system_memory_allocation_validate,
+            /*.split=*/             rv_system_memory_allocation_split,
+            /*.allocate=*/          rv_system_memory_allocation_allocate,
+            /*.release=*/           rv_system_memory_allocation_release,
+            /*.compute_size=*/      rv_system_memory_allocation_compute_size,
+            /*.print=*/             rv_system_memory_allocation_print,
+            /*.get_stats=*/         rv_system_memory_allocation_get_stats
         };
 
 /* ------------------- static function stubs --------------------------------- */
@@ -175,7 +175,7 @@
                     } u_ptr, u_sz;
                     u_ptr.p = (void *)t;
                     u_sz.ui32 = t->size;
-                    fprintf( stderr, "Allocation at %u validation failed with %u bytes.\n", u_ptr.ui, u_sz.ui );
+                    fprintf( stderr, "Allocation at %X validation failed with %u bytes.\n", u_ptr.ui, u_sz.ui );
                 }
             #endif
             return b;
@@ -235,7 +235,7 @@
                 } u_ptr, u_sz;
                 u_ptr.p = (void *)tnf;
                 u_sz.ui32 = tn->size;
-                fprintf( stdout, "Allocation at %u created with %u bytes.\n", u_ptr.ui, u_sz.ui );
+                fprintf( stdout, "Allocation at %X created with %u bytes.\n", u_ptr.ui, u_sz.ui );
             #endif
         //return status
             if( f )
@@ -286,7 +286,7 @@
                     } u_ptr, u_sz;
                     u_ptr.p = (void *)t;
                     u_sz.ui32 = sz;
-                    fprintf( stdout, "Allocation at %u used with %u bytes.\n", u_ptr.ui, u_sz.ui );
+                    fprintf( stdout, "Allocation at %X used with %u bytes.\n", u_ptr.ui, u_sz.ui );
                 #endif
                 if( n )
                     *n = t;
@@ -342,7 +342,7 @@
                         } u_ptr, u_sz;
                         u_ptr.p = (void *)t;
                         u_sz.ui32 = t->size;
-                        fprintf( stdout, "Allocation at %u released with %u bytes.\n", u_ptr.ui, u_sz.ui );
+                        fprintf( stdout, "Allocation at %X released with %u bytes.\n", u_ptr.ui, u_sz.ui );
                     #endif
                     r = 1;
                 }
@@ -409,7 +409,7 @@
                     fprintf( stdout, "\t\tFree " );
                 u_ptr.p = (void *)t;
                 u_sz.ui32 = t->size;
-                fprintf( stdout, "Allocation at %u with %u bytes.\n", u_ptr.ui, u_sz.ui );
+                fprintf( stdout, "Allocation at %X with %u bytes.\n", u_ptr.ui, u_sz.ui );
             //get next and pointer to object
                 rv_system_memory_allocation_get_components( t, 0, &u_ptr.p, &n );
             //print object
