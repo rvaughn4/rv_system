@@ -176,7 +176,7 @@
                 if( !e->o || e->is_locked )
                     continue;
             //fetch rwl
-                rwl = 0;
+                rwl = e->o->vtble->get_rwl( e->o );
                 if( !rwl )
                     return 0;
             //add
@@ -203,7 +203,7 @@
                 else
                 {
                 //fetch rwl
-                    rwl = 0;
+                    rwl = e->o->vtble->get_rwl( e->o );
                     if( !rwl )
                         continue;
                 //test

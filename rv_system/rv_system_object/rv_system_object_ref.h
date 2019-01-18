@@ -260,6 +260,13 @@
             uint64_t                            timeout_ms
         );
 
+    //returns pointer to rwl for object
+        struct rv_system_rwlock_s *__rv_system_object_ref_get_rwl
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        );
+
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 
     //none

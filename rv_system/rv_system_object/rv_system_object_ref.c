@@ -42,7 +42,7 @@
         /*.is_type=*/               __rv_system_object_ref_is_type,
         /*.link=*/                  __rv_system_object_ref_link,
         /*.unlink=*/                __rv_system_object_ref_unlink,
-        /*.get_rwl=*/               __rv_system_object_base_get_rwl
+        /*.get_rwl=*/               __rv_system_object_ref_get_rwl
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -350,10 +350,7 @@
             struct rv_system_object_ref_s *t;
             struct rv_system_rwlock_holder_s lh;
         //get this object
-            if( !p_link->vtble->get_type( p_link, (void **)&t, rv_system_object_type__object_ref ) )
-                return 0;
-        //already linked
-            if( t->obj )
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_ref ) )
                 return 0;
         //init lock holder
             if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
@@ -433,10 +430,7 @@
             struct rv_system_object_ref_s *t;
             struct rv_system_rwlock_holder_s lh;
         //get this object
-            if( !p_link->vtble->get_type( p_link, (void **)&t, rv_system_object_type__object_ref ) )
-                return 0;
-        //not linked
-            if( !t->obj )
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_ref ) )
                 return 0;
         //init lock holder
             if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
@@ -493,6 +487,43 @@
         //results
             return t->obj == 0;
         }
+
+    //returns pointer to rwl for object
+        struct rv_system_rwlock_s *__rv_system_object_ref_get_rwl
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        )
+        {
+            struct rv_system_object_ref_s *t;
+            struct rv_system_rwlock_holder_s lh;
+            struct rv_system_rwlock_s *r = 0;
+        //get this object
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_ref ) )
+                return 0;
+        //init lock holder
+            if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
+                return 0;
+            do
+            {
+            //add rwl
+                if( !rv_system_rwlock_holder_add( &lh, &t->rwl, 0 ) )
+                    continue;
+            //lock
+                if( !rv_system_rwlock_holder_lock( &lh, 1, 0, 1 ) )
+                    continue;
+            //not linked
+                if( !t->obj )
+                    continue;
+            //get lock
+                r = &t->obj->rwl;
+            }
+            while( 0 );
+        //destroy lock holder
+            rv_system_rwlock_holder_destroy_static( &lh );
+        //return result
+            return r;
+        };
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 
