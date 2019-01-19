@@ -65,8 +65,9 @@
             struct rv_system_time_s     *t
         )
         {
+            (void)t;
         //nothing to do
-        };
+        }
 
     //rv_system_time_query() fetches time from system
     //returns true when successful
@@ -107,7 +108,7 @@
             t->ticks_ms = tc;
         //return results
             return r;
-        };
+        }
 
 /* -- virtual method corresponding static function definitions --------------------- */
 

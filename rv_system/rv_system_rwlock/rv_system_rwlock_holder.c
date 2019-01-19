@@ -69,7 +69,7 @@
         {
         //clear all
             rv_system_rwlock_holder_clear( t );
-        };
+        }
 
     //rv_system_rwlock_holder_add() add mutex to holder collection
         bool rv_system_rwlock_holder_add
@@ -100,7 +100,7 @@
             }
         //blank not found
             return 0;
-        };
+        }
 
     //rv_system_lock_holder_clear() clear all mutexes (will unlock them)
         void rv_system_rwlock_holder_clear
@@ -116,7 +116,7 @@
             m = t->entry_cnt;
             for( i = 0; i < m; i++ )
                 t->entries[ i ].p = 0;
-        };
+        }
 
     //rv_system_lock_holder_lock() lock add mutexes
         bool rv_system_rwlock_holder_lock
@@ -250,7 +250,7 @@
             rv_system_time_destroy_static( &tm );
         //return status
             return r;
-        };
+        }
 
     //rv_system_lock_holder_unlock() unlock all mutexes
         void rv_system_rwlock_holder_unlock
@@ -309,7 +309,7 @@
             }
         //release lock holder
             rv_system_lock_holder_destroy_static( lh );
-        };
+        }
 
     //rv_system_rwlock_holder_contains() returns true if collection contains rwlock
         bool rv_system_rwlock_holder_contains
@@ -334,7 +334,7 @@
             }
         //not found
             return 0;
-        };
+        }
 
     //rv_system_rwlock_holder_is_locked() returns true if rwlock is in the collection and locked
         bool rv_system_rwlock_holder_is_locked
@@ -359,7 +359,7 @@
             }
         //not found
             return 0;
-        };
+        }
 
 //header guard end
     #endif

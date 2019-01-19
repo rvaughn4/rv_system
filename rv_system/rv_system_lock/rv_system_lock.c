@@ -74,7 +74,7 @@
             #ifdef rv_system_os_is_posix
                 pthread_mutex_destroy( &t->mtx );
             #endif
-        };
+        }
 
     //__rv_system_lock_lock() attempts to lock mutex before timeout
         bool __rv_system_lock_lock
@@ -139,7 +139,7 @@
                 fprintf( stdout, "unlocked\n" );
             #endif
         #endif
-        };
+        }
 
 /* -- virtual method corresponding static function definitions --------------------- */
 

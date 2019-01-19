@@ -213,7 +213,7 @@
                 while( 0 );
                 rv_system_memory_lock_destroy_static( &ml );
             }
-        };
+        }
 
     //rv_system_object_base_get_type() gets a pointer to the type specified if available for this object
     //          returns true if type is available
@@ -268,7 +268,7 @@
         )
         {
             return t->vtble->get_size( t );
-        };
+        }
 
     //rv_system_object_base_get_type_value() returns string for type name
         char *rv_system_object_base_get_type_value
@@ -278,7 +278,7 @@
         )
         {
             return t->vtble->get_type_value( t );
-        };
+        }
 
     //rv_system_object_base_is_type() returns true if type is found in object
         bool rv_system_object_base_is_type
@@ -324,7 +324,7 @@
         //return pointer
             *r = f;
             return 1;
-        };
+        }
 
 /* -- virtual method corresponding static function stubs --------------------- */
 
@@ -348,7 +348,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
-
+            (void)p_base;
         }
 
     //gen ref function, returns false if fails
@@ -360,8 +360,10 @@
             struct rv_system_object_ref_s       **pp
         )
         {
+            (void)p_base;
+            (void)pp;
             return 0;
-        };
+        }
 
     //gen readlock function, returns false if fails
         bool __rv_system_object_base_gen_readlock
@@ -372,8 +374,10 @@
             struct rv_system_object_readlock_s **pp
         )
         {
+            (void)p_base;
+            (void)pp;
             return 0;
-        };
+        }
 
     //gen writelock function, returns false if fails
         bool __rv_system_object_base_gen_writelock
@@ -384,8 +388,10 @@
             struct rv_system_object_writelock_s **pp
         )
         {
+            (void)p_base;
+            (void)pp;
             return 0;
-        };
+        }
 
     //get pointer to type function, returns false if not available
         bool __rv_system_object_base_get_type
@@ -418,6 +424,7 @@
             uint16_t                            szb
         )
         {
+            (void)p_base;
             return __rv_system_object_base_get_type_name__helper( pb, szb, rv_system_object_type__object_base );
         }
 
@@ -442,6 +449,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return sizeof( struct rv_system_object_base_s );
         }
 
@@ -452,6 +460,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return rv_system_object_type__object_base;
         }
 
@@ -464,6 +473,7 @@
             char *ctype
         )
         {
+            (void)p_base;
             return (char *)ctype == (char *)rv_system_object_type__object_base;
         }
 
@@ -480,6 +490,10 @@
             uint64_t                            timeout_ms
         )
         {
+            (void)p_base;
+            (void)p_link;
+            (void)is_blocking;
+            (void)timeout_ms;
             return 0;
         }
 
@@ -496,6 +510,10 @@
             uint64_t                            timeout_ms
         )
         {
+            (void)p_base;
+            (void)p_link;
+            (void)is_blocking;
+            (void)timeout_ms;
             return 0;
         }
 
@@ -506,8 +524,9 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return 0;
-        };
+        }
 
     //returns link for object
         struct rv_system_object_base_s *__rv_system_object_base_get_link
@@ -516,8 +535,9 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return 0;
-        };
+        }
 
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */

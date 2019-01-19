@@ -113,7 +113,7 @@
             }
         //release all allocations
             rv_system_memory_allocation_destroy_static( a );
-        };
+        }
 
     //rv_system_memory_frame_get_components() gets offsets to parts of frame
         void rv_system_memory_frame_get_components
@@ -142,7 +142,7 @@
             u.l += t->size;
             if( f )
                 *f = u.t;
-        };
+        }
 
     //rv_system_memory_frame_validate() verifies consistency of header and footer
         bool rv_system_memory_frame_verify
@@ -175,7 +175,7 @@
                 }
             #endif
             return b;
-        };
+        }
 
     //rv_system_memory_frame_allocate() attempts to allocate from an allocation on this frame
     //                                      else allocates from next frame or
@@ -316,7 +316,7 @@
         //print next
             if( t->next )
                 rv_system_memory_frame_print( t->next );
-        };
+        }
 
     //rv_system_memory_lock_get_stats() compute memory statistics
         void rv_system_memory_frame_get_stats
@@ -349,7 +349,7 @@
         //print next
             if( t->next )
                 rv_system_memory_frame_get_stats( t->next, s );
-        };
+        }
 
 //header guard end
     #endif

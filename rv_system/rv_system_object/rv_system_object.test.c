@@ -125,6 +125,11 @@ if( rv_system_memory_lock_lock( &ml, &m ) )
             struct rv_system_memory_lock_s *meml
         )
         {
+            (void)verbose;
+            (void)useGenLocks;
+            (void)obj;
+            (void)mem;
+            (void)meml;
             return 1;
         }
 

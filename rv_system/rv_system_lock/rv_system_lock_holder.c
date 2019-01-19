@@ -67,7 +67,7 @@
         {
         //clear all
             rv_system_lock_holder_clear( t );
-        };
+        }
 
     //rv_system_lock_holder_add() add mutex to holder collection
         bool rv_system_lock_holder_add
@@ -93,7 +93,7 @@
             }
         //blank not found
             return 0;
-        };
+        }
 
     //rv_system_lock_holder_contains() returns true if in collection
         bool rv_system_lock_holder_contains
@@ -118,7 +118,7 @@
             }
         //not found
             return 0;
-        };
+        }
 
     //rv_system_lock_holder_is_locked() returns true if collection contains that mutex and its locked
         bool rv_system_lock_holder_is_locked
@@ -143,7 +143,7 @@
             }
         //not found
             return 0;
-        };
+        }
 
     //rv_system_lock_holder_clear() clear all mutexes (will unlock them)
         void rv_system_lock_holder_clear
@@ -162,7 +162,7 @@
                 t->entries[ i ].p = 0;
                 t->entries[ i ].is_locked = 0;
             }
-        };
+        }
 
     //rv_system_lock_holder_lock() lock add mutexes
         bool rv_system_lock_holder_lock
@@ -231,7 +231,7 @@
             rv_system_time_destroy_static( &tm );
         //return status
             return r;
-        };
+        }
 
     //rv_system_lock_holder_unlock() unlock all mutexes
         void rv_system_lock_holder_unlock
@@ -254,7 +254,7 @@
             //blank out
                 t->entries[ i ].is_locked = 0;
             }
-        };
+        }
 
 //header guard end
     #endif

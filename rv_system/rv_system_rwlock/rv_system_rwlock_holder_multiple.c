@@ -131,7 +131,7 @@
         )
         {
             return rv_system_rwlock_holder_contains( &t->super, l );
-        };
+        }
 
     //rv_system_rwlock_holder_is_locked() returns true if rwlock is in the collection and locked
         bool rv_system_rwlock_holder_multiple_is_locked
@@ -143,7 +143,7 @@
         )
         {
             return rv_system_rwlock_holder_is_locked( &t->super, l );
-        };
+        }
 
 //header guard end
     #endif

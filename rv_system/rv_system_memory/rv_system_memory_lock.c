@@ -135,7 +135,7 @@
         {
             t->t = 0;
             rv_system_lock_holder_clear( &t->lh );
-        };
+        }
 
     //rv_system_memory_lock_create_allocate() allocates memory from a frame and an allocation
         bool rv_system_memory_lock_allocate
@@ -247,6 +247,9 @@
                 i += pg_sz;
         //attempt to allocate
             #ifdef rv_system_os_is_posix
+                #ifndef MAP_ANONYMOUS
+                    #define MAP_ANONYMOUS 0
+                #endif
                 r = mmap( 0, i, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0 );
                 if( r == MAP_FAILED )
                     r = 0;
@@ -378,7 +381,7 @@
                 fprintf( stdout, "\t\tFree: %u bytes\n", (unsigned int)s->mem_free );
                 fprintf( stdout, "\t\tOverhead: %u bytes\n", (unsigned int)s->mem_overhead );
             #endif
-        };
+        }
 
 //header guard end
     #endif

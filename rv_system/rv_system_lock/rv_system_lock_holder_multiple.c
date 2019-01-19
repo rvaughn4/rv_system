@@ -105,7 +105,7 @@
         )
         {
             return rv_system_lock_holder_is_locked( &t->super, l );
-        };
+        }
 
     //rv_system_lock_holder_clear() clear all mutexes (will unlock them)
         void rv_system_lock_holder_multiple_clear

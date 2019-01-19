@@ -142,7 +142,7 @@
                 a.b += sizeof( struct rv_system_memory_allocation_s );
             if( n )
                 *n = a.t;
-        };
+        }
 
     //rv_system_memory_allocation_validate() verifies allocation header and footer to catch overruns
         bool rv_system_memory_allocation_validate
@@ -179,7 +179,7 @@
                 }
             #endif
             return b;
-        };
+        }
 
     //rv_system_memory_allocation_split() breaks apart a free allocation into two allocations with one being a specified size internally
     //  returns true if could be split. new allocation is always created at the end of the old allocation
@@ -241,7 +241,7 @@
             if( f )
                 *f = tn;
             return 1;
-        };
+        }
 
     //rv_system_memory_allocation_allocate() if size is same as this allocation and is free, will take this allocation.
     //                                          else if possible will split and use new allocation.
@@ -393,7 +393,7 @@
             if( !rv_system_memory_allocation_validate( t ) )
                 return;
         //print
-            //#ifdef rv_system_memory_allocation_print_enabled
+            #ifdef rv_system_memory_allocation_print_enabled
                 union
                 {
                     unsigned int    ui;
@@ -421,15 +421,15 @@
                     if( u_sz.ob )
                         fprintf( stdout, "\t\t\tlinked to %s at %X\n", rv_system_object_base_get_type_value( u_sz.ob ), u_sz.ui );
                 }
-            //#else
+            #else
             //get next
                 rv_system_memory_allocation_get_components( t, 0, 0, &n );
-            //#endif
+            #endif
         //print next
             if( !n )
                 return;
             rv_system_memory_allocation_print( n );
-        };
+        }
 
     //rv_system_memory_allocation_get_stats() compute memory statistics
         void rv_system_memory_allocation_get_stats
@@ -465,7 +465,7 @@
             if( !n )
                 return;
             rv_system_memory_allocation_get_stats( n, s );
-        };
+        }
 
 //header guard end
     #endif

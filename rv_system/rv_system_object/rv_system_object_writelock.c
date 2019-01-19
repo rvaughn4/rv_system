@@ -77,8 +77,7 @@
         )
         {
             return rv_system_object_writelock_create_super_static( t, sz, &rv_system_object_writelock_vtble, (void *)t, mem );
-        };
-
+        }
 
     //rv_system_object_writelock_create_super_static() initiates struct in externally allocated memory
     //returns true when successful
@@ -103,8 +102,8 @@
         //compute size remaining
             szr = sz - rv_system_object_writelock_get_super_offset();
         //super
-            return rv_system_object_base_create_super_static( &t->base, szr, &rv_system_object_writelock_vtble, top, mem );
-        };
+            return rv_system_object_base_create_super_static( &t->base, szr, vtble, top, mem );
+        }
 
     //rv_system_object_writelock_create() initiates struct in newly allocated memory
         struct rv_system_object_writelock_s *rv_system_object_writelock_create
@@ -148,7 +147,7 @@
             if( pt )
                 *pt = a.o;
             return r;
-        };
+        }
 
     //rv_system_object_writelock_get_super_offset() returns offset of super
         uint64_t rv_system_object_writelock_get_super_offset
@@ -267,6 +266,7 @@
             uint16_t                            szb
         )
         {
+            (void)p_base;
             return __rv_system_object_base_get_type_name__helper( pb, szb, rv_system_object_type__object_writelock );
         }
 
@@ -291,6 +291,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return sizeof( struct rv_system_object_writelock_s );
         }
 
@@ -301,6 +302,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return rv_system_object_type__object_writelock;
         }
 
@@ -450,7 +452,7 @@
                 return 0;
         //return link
             return &t->obj->base;
-        };
+        }
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 

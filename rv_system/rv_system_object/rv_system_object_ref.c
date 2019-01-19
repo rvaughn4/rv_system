@@ -77,8 +77,7 @@
         )
         {
             return rv_system_object_ref_create_super_static( t, sz, &rv_system_object_ref_vtble, (void *)t, mem );
-        };
-
+        }
 
     //rv_system_object_ref_create_super_static() initiates struct in externally allocated memory
     //returns true when successful
@@ -111,8 +110,8 @@
             b.l = b.l - a.l;
             szr = sz - b.l;
         //super
-            return rv_system_object_base_create_super_static( &t->base, szr, &rv_system_object_ref_vtble, top, mem );
-        };
+            return rv_system_object_base_create_super_static( &t->base, szr, vtble, top, mem );
+        }
 
     //rv_system_object_ref_create() initiates struct in newly allocated memory
         struct rv_system_object_ref_s *rv_system_object_ref_create
@@ -156,7 +155,7 @@
             if( pt )
                 *pt = a.o;
             return r;
-        };
+        }
 
     //rv_system_object_ref_get_super_offset() returns offset of super
         uint64_t rv_system_object_ref_get_super_offset
@@ -282,6 +281,7 @@
             uint16_t                            szb
         )
         {
+            (void)p_base;
             return __rv_system_object_base_get_type_name__helper( pb, szb, rv_system_object_type__object_ref );
         }
 
@@ -306,6 +306,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return sizeof( struct rv_system_object_ref_s );
         }
 
@@ -316,6 +317,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return rv_system_object_type__object_ref;
         }
 
@@ -526,7 +528,7 @@
             rv_system_rwlock_holder_destroy_static( &lh );
         //return result
             return r;
-        };
+        }
 
     //returns link for object
         struct rv_system_object_base_s *__rv_system_object_ref_get_link
@@ -543,7 +545,7 @@
                 return 0;
         //return link
             return &t->obj->base;
-        };
+        }
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 

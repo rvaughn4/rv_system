@@ -80,7 +80,7 @@
         )
         {
             return rv_system_object_create_super_static( t, sz, &rv_system_object_vtble, (void *)t, mem );
-        };
+        }
 
 
     //rv_system_object_create_super_static() initiates struct in externally allocated memory
@@ -106,8 +106,8 @@
         //compute size remaining
             szr = sz - rv_system_object_get_super_offset();
         //super
-            return rv_system_object_base_create_super_static( &t->base, szr, &rv_system_object_vtble, top, mem );
-        };
+            return rv_system_object_base_create_super_static( &t->base, szr, vtble, top, mem );
+        }
 
     //rv_system_object_create() initiates struct in newly allocated memory
         struct rv_system_object_s *rv_system_object_create
@@ -147,7 +147,7 @@
             if( pt )
                 b->vtble->get_type( b, (void **)pt, rv_system_object_type__object );
             return r;
-        };
+        }
 
     //rv_system_object_get_super_offset() returns offset of super
         uint64_t rv_system_object_get_super_offset
@@ -265,7 +265,7 @@
             if( pp )
                 *pp = r;
             return r != 0;
-        };
+        }
 
     //gen readlock function, returns false if fails
         bool __rv_system_object_gen_readlock
@@ -276,8 +276,12 @@
             struct rv_system_object_readlock_s **pp
         )
         {
-            return rv_system_object_readlock_create( p_base->mem, 0 );
-        };
+            struct rv_system_object_readlock_s *r;
+            r = rv_system_object_readlock_create( p_base->mem, 0 );
+            if( pp )
+                *pp = r;
+            return r != 0;
+        }
 
     //gen writelock function, returns false if fails
         bool __rv_system_object_gen_writelock
@@ -288,8 +292,12 @@
             struct rv_system_object_writelock_s **pp
         )
         {
-            return rv_system_object_writelock_create( p_base->mem, 0 );
-        };
+            struct rv_system_object_writelock_s *r;
+            r = rv_system_object_writelock_create( p_base->mem, 0 );
+            if( pp )
+                *pp = r;
+            return r != 0;
+        }
 
     //get pointer to type function, returns false if not available
         bool __rv_system_object_get_type
@@ -327,6 +335,7 @@
             uint16_t                            szb
         )
         {
+            (void)p_base;
             return __rv_system_object_base_get_type_name__helper( pb, szb, rv_system_object_type__object );
         }
 
@@ -351,6 +360,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return sizeof( struct rv_system_object_s );
         }
 
@@ -361,6 +371,7 @@
             struct rv_system_object_base_s      *p_base
         )
         {
+            (void)p_base;
             return rv_system_object_type__object;
         }
 
@@ -496,7 +507,7 @@
                 return 0;
         //return rwl
             return &t->rwl;
-        };
+        }
 
 /* -------- helper functions  --------------------- */
 
@@ -513,7 +524,7 @@
         //zero it
             for( i = 0; i < t->cnt_refs; i++ )
                 t->refs[ i ] = 0;
-        };
+        }
 
     //destroy ref list
         void __rv_system_object_destroy_ref_list
@@ -536,7 +547,7 @@
             }
         //reset
             __rv_system_object_reset_ref_list( t );
-        };
+        }
 
     //unlink all refs on list
         void __rv_system_object_unlink_all
@@ -558,7 +569,7 @@
             //unlink
                 r->vtble->unlink( r, &t->base, 1, 0 );
             }
-        };
+        }
 
     //resize ref list
         bool __rv_system_object_resize_ref_list
@@ -613,7 +624,7 @@
             rv_system_memory_lock_destroy_static( &ml );
         //return result
             return r;
-        };
+        }
 
     //add ref to list
         bool __rv_system_object_add_ref_list
@@ -637,7 +648,7 @@
             }
         //return fail
             return 0;
-        };
+        }
 
     //remove ref to list
         bool __rv_system_object_remove_ref_list
@@ -661,7 +672,7 @@
             }
         //return fail
             return 0;
-        };
+        }
 
     //add ref to list
         bool __rv_system_object_on_ref_list
@@ -683,7 +694,7 @@
             }
         //return fail
             return 0;
-        };
+        }
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 

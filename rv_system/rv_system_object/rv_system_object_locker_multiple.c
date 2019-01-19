@@ -78,7 +78,7 @@
         )
         {
             rv_system_object_locker_destroy_static( &t->super );
-        };
+        }
 
     //rv_system_object_locker_multiple_add() add rwlock to holder collection
         bool rv_system_object_locker_multiple_add
@@ -104,7 +104,7 @@
         )
         {
             rv_system_object_locker_clear( &t->super );
-        };
+        }
 
     //rv_system_object_locker_multiple_lock() lock add mutexes
         bool rv_system_object_locker_multiple_lock
@@ -131,8 +131,7 @@
         )
         {
             rv_system_object_locker_unlock( &t->super );
-        };
-
+        }
 
     //rv_system_object_locker_multiple_contains() returns true if collection contains object
         bool rv_system_object_locker_multiple_contains
@@ -144,7 +143,7 @@
         )
         {
             return rv_system_object_locker_contains( &t->super, o );
-        };
+        }
 
     //rv_system_object_locker_multiple_is_locked() returns true if object is in the collection and locked
         bool rv_system_object_locker_multiple_is_locked
@@ -156,7 +155,7 @@
         )
         {
             return rv_system_object_locker_is_locked( &t->super, o );
-        };
+        }
 
     //rv_system_object_locker_multiple_get_locked() returns true if object is in the collection and locked,
     //      fetches pointer to lock of specified type

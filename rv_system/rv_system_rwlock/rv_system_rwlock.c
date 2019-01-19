@@ -60,7 +60,7 @@
         //try to write lock
         //deinit lock
             rv_system_lock_destroy_static( &t->lk );
-        };
+        }
 
 //header guard end
     #endif
