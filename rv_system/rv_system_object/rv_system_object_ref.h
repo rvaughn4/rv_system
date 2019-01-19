@@ -267,6 +267,13 @@
             struct rv_system_object_base_s      *p_base
         );
 
+    //returns link for object
+        struct rv_system_object_base_s *__rv_system_object_ref_get_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        );
+
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 
     //none

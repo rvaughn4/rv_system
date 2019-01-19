@@ -178,6 +178,13 @@
             struct rv_system_object_base_s      *p_base
         );
 
+    //returns link for object
+        typedef struct rv_system_object_base_s *(* __rv_system_object_base_get_link_ptr)
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        );
+
     //vtble
         struct rv_system_object_base_vtble_s
         {
@@ -209,6 +216,8 @@
             __rv_system_object_base_unlink_ptr                unlink;
         //get_rwl
             __rv_system_object_base_get_rwl_ptr               get_rwl;
+        //get link
+            __rv_system_object_base_get_link_ptr              get_link;
         };
         struct rv_system_object_base_vtble_s rv_system_object_base_vtble;
 
@@ -590,6 +599,13 @@
 
     //returns pointer to rwl for object
         struct rv_system_rwlock_s *__rv_system_object_base_get_rwl
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        );
+
+    //returns link for object
+        struct rv_system_object_base_s *__rv_system_object_base_get_link
         (
         //pointer to object base
             struct rv_system_object_base_s      *p_base

@@ -44,7 +44,8 @@
         /*.is_type=*/               __rv_system_object_readlock_is_type,
         /*.link=*/                  __rv_system_object_readlock_link,
         /*.unlink=*/                __rv_system_object_readlock_unlink,
-        /*.get_rwl=*/               __rv_system_object_base_get_rwl
+        /*.get_rwl=*/               __rv_system_object_base_get_rwl,
+        /*.get_link=*/              __rv_system_object_readlock_get_link
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -334,7 +335,7 @@
             struct rv_system_object_ref_s *r;
             struct rv_system_object_readlock_s *t;
         //get this object
-            if( !p_link->vtble->get_type( p_link, (void **)&t, rv_system_object_type__object_readlock ) )
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_readlock ) )
                 return 0;
         //convert to object
             if( p_link->vtble->get_type( p_link, (void **)&o, rv_system_object_type__object ) )
@@ -388,7 +389,7 @@
             struct rv_system_object_ref_s *r;
             struct rv_system_object_readlock_s *t;
         //get this object
-            if( !p_link->vtble->get_type( p_link, (void **)&t, rv_system_object_type__object_readlock ) )
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_readlock ) )
                 return 0;
         //is not linked
             if( !t->obj )
@@ -431,6 +432,23 @@
         //failed
             return 0;
         }
+
+    //returns link for object
+        struct rv_system_object_base_s *__rv_system_object_readlock_get_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        )
+        {
+            struct rv_system_object_readlock_s *t;
+        //get this object
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_readlock ) )
+                return 0;
+            if( !t->obj )
+                return 0;
+        //return link
+            return &t->obj->base;
+        };
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 

@@ -44,7 +44,8 @@
         /*.is_type=*/               __rv_system_object_ref_is_type,
         /*.link=*/                  __rv_system_object_ref_link,
         /*.unlink=*/                __rv_system_object_ref_unlink,
-        /*.get_rwl=*/               __rv_system_object_ref_get_rwl
+        /*.get_rwl=*/               __rv_system_object_ref_get_rwl,
+        /*.get_link=*/              __rv_system_object_ref_get_link
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -525,6 +526,23 @@
             rv_system_rwlock_holder_destroy_static( &lh );
         //return result
             return r;
+        };
+
+    //returns link for object
+        struct rv_system_object_base_s *__rv_system_object_ref_get_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        )
+        {
+            struct rv_system_object_ref_s *t;
+        //get this object
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_ref ) )
+                return 0;
+            if( !t->obj )
+                return 0;
+        //return link
+            return &t->obj->base;
         };
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */

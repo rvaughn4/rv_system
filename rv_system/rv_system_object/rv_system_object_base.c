@@ -43,7 +43,8 @@
         /*.is_type=*/               __rv_system_object_base_is_type,
         /*.link=*/                  __rv_system_object_base_link,
         /*.unlink=*/                __rv_system_object_base_unlink,
-        /*.get_rwl=*/               __rv_system_object_base_get_rwl
+        /*.get_rwl=*/               __rv_system_object_base_get_rwl,
+        /*.get_link=*/              __rv_system_object_base_get_link
         };
 
 /* -------- structures containing easy function pointers --------------------- */
@@ -507,6 +508,17 @@
         {
             return 0;
         };
+
+    //returns link for object
+        struct rv_system_object_base_s *__rv_system_object_base_get_link
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base
+        )
+        {
+            return 0;
+        };
+
 
 /* -------- helper functions to be used by inherited objects to perform work in virtual functions --------------------- */
 

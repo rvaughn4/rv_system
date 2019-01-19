@@ -47,7 +47,8 @@
         /*.is_type=*/               __rv_system_object_is_type,
         /*.link=*/                  __rv_system_object_link,
         /*.unlink=*/                __rv_system_object_unlink,
-        /*.get_rwl=*/               __rv_system_object_get_rwl
+        /*.get_rwl=*/               __rv_system_object_get_rwl,
+        /*.get_link=*/              __rv_system_object_base_get_link
         };
 
 /* -------- structures containing easy function pointers --------------------- */

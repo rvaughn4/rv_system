@@ -393,7 +393,7 @@
             if( !rv_system_memory_allocation_validate( t ) )
                 return;
         //print
-            #ifdef rv_system_memory_allocation_print_enabled
+            //#ifdef rv_system_memory_allocation_print_enabled
                 union
                 {
                     unsigned int    ui;
@@ -416,12 +416,15 @@
                 if( t->is_used && t->offset_object_base )
                 {
                     u_ptr.ui64 += t->offset_object_base - 1;
-                    fprintf( stdout, "\t\t\t%s with size %u\n", rv_system_object_base_get_type_value( u_ptr.ob ), (unsigned int)rv_system_object_base_get_size( u_ptr.ob ) );
+                    fprintf( stdout, "\t\t\t%s with size %u at %X\n", rv_system_object_base_get_type_value( u_ptr.ob ), (unsigned int)rv_system_object_base_get_size( u_ptr.ob ), u_ptr.ui );
+                    u_sz.ob = u_ptr.ob->vtble->get_link( u_ptr.ob );
+                    if( u_sz.ob )
+                        fprintf( stdout, "\t\t\tlinked to %s at %X\n", rv_system_object_base_get_type_value( u_sz.ob ), u_sz.ui );
                 }
-            #else
+            //#else
             //get next
                 rv_system_memory_allocation_get_components( t, 0, 0, &n );
-            #endif
+            //#endif
         //print next
             if( !n )
                 return;
