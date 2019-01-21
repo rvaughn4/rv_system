@@ -250,7 +250,7 @@
                     continue;
             //if locked, unlock
                 if( t->entries[ i ].is_locked )
-                    __rv_system_lock.unlock( t->entries[ i ].p );
+                    __rv_system_lock_unlock( t->entries[ i ].p );
             //blank out
                 t->entries[ i ].is_locked = 0;
             }

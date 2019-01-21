@@ -104,7 +104,7 @@
         //pointer to object to add
             struct rv_system_object_base_s          *o,
         //pointer to lock to add (optional)
-            struct rv_system_object_base_s          *l_optional,
+            struct rv_system_object_base_s          **l_optional,
         //type of locking to perform, read or write
             bool                                    is_write
         );
@@ -115,9 +115,49 @@
         //pointer to object to add
             struct rv_system_object_base_s          *o,
         //pointer to lock to add (optional)
-            struct rv_system_object_base_s          *l_optional,
+            struct rv_system_object_base_s          **l_optional,
         //type of locking to perform, read or write
             bool                                    is_write
+        );
+
+    //rv_system_object_locker_add_read() add rwlock to holder collection
+        bool rv_system_object_locker_add_read
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s        *t,
+        //pointer to object to add
+            struct rv_system_object_base_s          *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_readlock_s      **l_optional
+        );
+        typedef bool (* rv_system_object_locker_add_read_ptr)
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s        *t,
+        //pointer to object to add
+            struct rv_system_object_base_s          *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_readlock_s      **l_optional
+        );
+
+    //rv_system_object_locker_add_write() add rwlock to holder collection
+        bool rv_system_object_locker_add_write
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s        *t,
+        //pointer to object to add
+            struct rv_system_object_base_s          *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_writelock_s      **l_optional
+        );
+        typedef bool (* rv_system_object_locker_add_write_ptr)
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s        *t,
+        //pointer to object to add
+            struct rv_system_object_base_s          *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_writelock_s      **l_optional
         );
 
     //rv_system_object_locker_clear() clear all mutexes (will unlock them)
@@ -240,6 +280,10 @@
             rv_system_object_locker_destroy_static_ptr    destroy_static;
         //add
             rv_system_object_locker_add_ptr               add;
+        //add_read
+            rv_system_object_locker_add_read_ptr          add_read;
+        //add_write
+            rv_system_object_locker_add_write_ptr         add_write;
         //clear
             rv_system_object_locker_clear_ptr             clear;
         //lock

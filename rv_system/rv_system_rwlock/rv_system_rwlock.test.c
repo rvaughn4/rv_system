@@ -85,19 +85,19 @@
                 rv_system_rwlock_holder.clear( &lh );
                 if( verbose )
                     fprintf( stdout, "\tWrite locking one object with 0ms timeout...SUCCESS\r\n" );
-            //lock with 1000 timeout
+            //lock with 100 timeout
                 if( verbose )
-                    fprintf( stdout, "\tWrite locking one object with 1000ms timeout...\r\n" );
+                    fprintf( stdout, "\tWrite locking one object with 100ms timeout...\r\n" );
                 b = rv_system_rwlock_holder.add( &lh, &l0, 1 );
-                b &= rv_system_rwlock_holder.lock( &lh, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder.lock( &lh, 0, 100, 1 );
                 if( !b )
                 {
-                    fprintf( stderr, "\tWrite locking one object with 1000ms timeout...FAIL\r\n" );
+                    fprintf( stderr, "\tWrite locking one object with 100ms timeout...FAIL\r\n" );
                     break;
                 }
                 rv_system_rwlock_holder.clear( &lh );
                 if( verbose )
-                    fprintf( stdout, "\tWrite locking one object with 1000ms timeout...SUCCESS\r\n" );
+                    fprintf( stdout, "\tWrite locking one object with 100ms timeout...SUCCESS\r\n" );
             //lock blocking
                 if( verbose )
                     fprintf( stdout, "\tRead locking one object blocking...\r\n" );
@@ -124,19 +124,19 @@
                 rv_system_rwlock_holder.clear( &lh );
                 if( verbose )
                     fprintf( stdout, "\tRead locking one object with 0ms timeout...SUCCESS\r\n" );
-            //lock with 1000 timeout
+            //lock with 100 timeout
                 if( verbose )
-                    fprintf( stdout, "\tRead locking one object with 1000ms timeout...\r\n" );
+                    fprintf( stdout, "\tRead locking one object with 100ms timeout...\r\n" );
                 b = rv_system_rwlock_holder.add( &lh, &l0, 0 );
-                b &= rv_system_rwlock_holder.lock( &lh, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder.lock( &lh, 0, 100, 1 );
                 if( !b )
                 {
-                    fprintf( stderr, "\tRead locking one object with 1000ms timeout...FAIL\r\n" );
+                    fprintf( stderr, "\tRead locking one object with 100ms timeout...FAIL\r\n" );
                     break;
                 }
                 rv_system_rwlock_holder.clear( &lh );
                 if( verbose )
-                    fprintf( stdout, "\tRead locking one object with 1000ms timeout...SUCCESS\r\n" );
+                    fprintf( stdout, "\tRead locking one object with 100ms timeout...SUCCESS\r\n" );
             //multiple blocking locks on multiple mutexes
                 if( verbose )
                     fprintf( stdout, "\tWrite locking multiple objects blocking...\r\n" );
@@ -201,38 +201,38 @@
                 rv_system_rwlock_holder_multiple.clear( &lm );
                 if( verbose )
                     fprintf( stdout, "\tRead locking multiple objects with 0ms timeout...SUCCESS\r\n" );
-            //multiple 1000ms timeout locks on multiple mutexes
+            //multiple 100ms timeout locks on multiple mutexes
                 if( verbose )
-                    fprintf( stdout, "\tWrite locking multiple objects with 1000ms timeout...\r\n" );
+                    fprintf( stdout, "\tWrite locking multiple objects with 100ms timeout...\r\n" );
                 b = rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l1, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l2, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l3, 1 );
-                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
-                    fprintf( stderr, "\tWrite locking multiple objects with 1000ms timeout...FAIL\r\n" );
+                    fprintf( stderr, "\tWrite locking multiple objects with 100ms timeout...FAIL\r\n" );
                     break;
                 }
                 rv_system_rwlock_holder_multiple.clear( &lm );
                 if( verbose )
-                    fprintf( stdout, "\tWrite locking multiple objects with 1000ms timeout...SUCCESS\r\n" );
+                    fprintf( stdout, "\tWrite locking multiple objects with 100ms timeout...SUCCESS\r\n" );
             //multiple 0ms timeout locks on multiple mutexes
                 if( verbose )
-                    fprintf( stdout, "\tRead locking multiple objects with 1000ms timeout...\r\n" );
+                    fprintf( stdout, "\tRead locking multiple objects with 100ms timeout...\r\n" );
                 b = rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l1, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l2, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l3, 0 );
-                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
-                    fprintf( stderr, "\tRead locking multiple objects with 1000ms timeout...FAIL\r\n" );
+                    fprintf( stderr, "\tRead locking multiple objects with 100ms timeout...FAIL\r\n" );
                     break;
                 }
                 rv_system_rwlock_holder_multiple.clear( &lm );
                 if( verbose )
-                    fprintf( stdout, "\tRead locking multiple objects with 1000ms timeout...SUCCESS\r\n" );
+                    fprintf( stdout, "\tRead locking multiple objects with 100ms timeout...SUCCESS\r\n" );
             //multiple write locks on same object
                 if( verbose )
                     fprintf( stdout, "\tMultiple write locks on same object (illegal)...\r\n" );
@@ -240,7 +240,7 @@
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
-                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple write locks on same object (illegal)...FAIL\r\n" );
@@ -256,7 +256,7 @@
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
-                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple read locks on same object...FAIL\r\n" );
@@ -272,7 +272,7 @@
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
-                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple read locks on same object that has been write locked first (illegal)...FAIL\r\n" );
@@ -288,7 +288,7 @@
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
-                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple write locks on same object that has been read locked first (illegal)...FAIL\r\n" );
@@ -301,11 +301,11 @@
                 if( verbose )
                     fprintf( stdout, "\tMultiple containers, multiple read locks on same object...\r\n" );
                 b = rv_system_rwlock_holder.add( &lh, &l0, 0 );
-                b &= rv_system_rwlock_holder.lock( &lh, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder.lock( &lh, 0, 100, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
-                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple containers, multiple read locks on same object...FAIL\r\n" );
@@ -319,11 +319,11 @@
                 if( verbose )
                     fprintf( stdout, "\tMultiple containers, multiple write locks on same object (illegal)...\r\n" );
                 b = rv_system_rwlock_holder.add( &lh, &l0, 1 );
-                b &= rv_system_rwlock_holder.lock( &lh, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder.lock( &lh, 0, 100, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
-                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple containers, multiple write locks on same object (illegal)...FAIL\r\n" );
@@ -337,11 +337,11 @@
                 if( verbose )
                     fprintf( stdout, "\tMultiple containers, read lock on write locked object (illegal)...\r\n" );
                 b = rv_system_rwlock_holder.add( &lh, &l0, 1 );
-                b &= rv_system_rwlock_holder.lock( &lh, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder.lock( &lh, 0, 100, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 0 );
-                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple containers, read lock on write locked object (illegal)...FAIL\r\n" );
@@ -355,11 +355,11 @@
                 if( verbose )
                     fprintf( stdout, "\tMultiple containers, write lock on read locked object (illegal)...\r\n" );
                 b = rv_system_rwlock_holder.add( &lh, &l0, 0 );
-                b &= rv_system_rwlock_holder.lock( &lh, 0, 1000, 1 );
+                b &= rv_system_rwlock_holder.lock( &lh, 0, 100, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
                 b &= rv_system_rwlock_holder_multiple.add( &lm, &l0, 1 );
-                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 1000, 1 );
+                b &= !rv_system_rwlock_holder_multiple.lock( &lm, 0, 100, 1 );
                 if( !b )
                 {
                     fprintf( stderr, "\tMultiple containers, write lock on read locked object (illegal)...FAIL\r\n" );

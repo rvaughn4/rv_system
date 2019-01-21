@@ -31,6 +31,8 @@
             /*.create_static=*/     rv_system_object_locker_create_static,
             /*.destroy_static=*/    rv_system_object_locker_destroy_static,
             /*.add=*/               rv_system_object_locker_add,
+            /*.add_read=*/          rv_system_object_locker_add_read,
+            /*.add_write=*/         rv_system_object_locker_add_write,
             /*.clear=*/             rv_system_object_locker_clear,
             /*.lock=*/              rv_system_object_locker_lock,
             /*.unlock=*/            rv_system_object_locker_unlock,
@@ -70,6 +72,7 @@
             struct rv_system_object_locker_s     *t
         )
         {
+            rv_system_object_locker_unlock( t );
             rv_system_object_locker_clear( t );
             rv_system_rwlock_holder_destroy_static( &t->slh );
         }
@@ -82,7 +85,7 @@
         //pointer to object to add
             struct rv_system_object_base_s          *o,
         //pointer to lock to add (optional)
-            struct rv_system_object_base_s          *l_optional,
+            struct rv_system_object_base_s          **l_optional,
         //type of locking to perform, read or write
             bool                                    is_write
         )
@@ -101,22 +104,23 @@
                 e->is_locked = 0;
                 e->is_write = is_write;
                 e->d = 0;
-                e->l = l_optional;
+                if( l_optional )
+                    e->l = *l_optional;
+                else
+                    e->l = 0;
             //no writelock or readlock object provided, must create and delete later
                 if( !e->l )
                 {
                     if( e->is_write )
                     {
                         struct rv_system_object_writelock_s *wl;
-                        o->vtble->gen_writelock( o, &wl );
-                        if( wl )
+                        if( o->vtble->gen_writelock( o, &wl ) && wl )
                             e->l = &wl->base;
                     }
                     else
                     {
                         struct rv_system_object_readlock_s *rl;
-                        o->vtble->gen_readlock( o, &rl );
-                        if( rl )
+                        if( o->vtble->gen_readlock( o, &rl ) && rl )
                             e->l = &rl->base;
                     }
                 //make sure to keep up with deleting it!
@@ -127,10 +131,76 @@
                     return 0;
             //success
                 e->o = o;
+                if( l_optional )
+                    *l_optional = e->l;
                 return 1;
             }
         //blank not found
             return 0;
+        }
+
+    //rv_system_object_locker_add_read() add rwlock to holder collection
+        bool rv_system_object_locker_add_read
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s        *t,
+        //pointer to object to add
+            struct rv_system_object_base_s          *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_readlock_s      **l_optional
+        )
+        {
+            struct rv_system_object_base_s *lb;
+            struct rv_system_object_readlock_s *rl;
+        //convert pointer
+            if( l_optional )
+                rl = *l_optional;
+            else
+                rl = 0;
+            if( rl )
+                lb = &rl->base;
+            else
+                lb = 0;
+        //call add
+            if( !rv_system_object_locker_add( t, o, &lb, 0 ) )
+                return 0;
+        //convert pointer
+            if( l_optional )
+                rv_system_object_base_get_type( lb, (void **)l_optional, rv_system_object_type__object_readlock );
+        //return success
+            return 1;
+        }
+
+    //rv_system_object_locker_add_write() add rwlock to holder collection
+        bool rv_system_object_locker_add_write
+        (
+        //pointer to struct
+            struct rv_system_object_locker_s        *t,
+        //pointer to object to add
+            struct rv_system_object_base_s          *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_writelock_s      **l_optional
+        )
+        {
+            struct rv_system_object_base_s *lb;
+            struct rv_system_object_writelock_s *rl;
+        //convert pointer
+            if( l_optional )
+                rl = *l_optional;
+            else
+                rl = 0;
+            if( rl )
+                lb = &rl->base;
+            else
+                lb = 0;
+        //call add
+            if( !rv_system_object_locker_add( t, o, &lb, 1 ) )
+                return 0;
+        //convert pointer
+            if( l_optional )
+                rv_system_object_base_get_type( lb, (void **)l_optional, rv_system_object_type__object_writelock );
+        //return success
+            return 1;
         }
 
     //rv_system_object_locker_clear() clear all mutexes (will unlock them)
@@ -141,8 +211,6 @@
         )
         {
             uint16_t i, m;
-        //unlock all
-            rv_system_object_locker_unlock( t );
         //loop through until blank found
             m = t->entry_cnt;
             for( i = 0; i < m; i++ )
@@ -235,11 +303,16 @@
                 if( !e->l )
                     continue;
                 e->l->vtble->unlink( e->l, e->o, 1, 0 );
-                if( !e->d )
+                if( e->d )
+                {
                     rv_system_object_base_destroy( e->d );
+                    e->d = 0;
+                    e->l = 0;
+                }
             }
         //unlock all in holder
             rv_system_rwlock_holder_unlock( t->lh );
+            rv_system_rwlock_holder_clear( t->lh );
         }
 
     //rv_system_object_locker_contains() returns true if collection contains object

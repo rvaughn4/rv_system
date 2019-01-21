@@ -25,6 +25,8 @@
             /*.create_static=*/     rv_system_object_locker_multiple_create_static,
             /*.destroy_static=*/    rv_system_object_locker_multiple_destroy_static,
             /*.add=*/               rv_system_object_locker_multiple_add,
+            /*.add_read=*/          rv_system_object_locker_multiple_add_read,
+            /*.add_write=*/         rv_system_object_locker_multiple_add_write,
             /*.clear=*/             rv_system_object_locker_multiple_clear,
             /*.lock=*/              rv_system_object_locker_multiple_lock,
             /*.unlock=*/            rv_system_object_locker_multiple_unlock,
@@ -52,9 +54,16 @@
         //init super
             if( !rv_system_object_locker_create_static( &t->super, sz ) )
                 return 0;
+        //init lock holder
+            if( !rv_system_rwlock_holder_multiple_create_static( &t->slh, sizeof( t->slh ) ) )
+            {
+                rv_system_object_locker_destroy_static( &t->super );
+                return 0;
+            }
         //init multiple
             t->super.entry_cnt = rv_system_object_locker_multiple_entry_max;
             t->super.entries = &t->entries[ 0 ];
+            t->super.lh = &t->slh.super;
         //init entires
             for( i = 0; i < rv_system_object_locker_multiple_entry_max; i++ )
             {
@@ -77,6 +86,10 @@
             struct rv_system_object_locker_multiple_s     *t
         )
         {
+        //destroy lock holder
+            t->super.lh = &t->super.slh;
+            rv_system_rwlock_holder_multiple_destroy_static( &t->slh );
+        //destroy super
             rv_system_object_locker_destroy_static( &t->super );
         }
 
@@ -88,12 +101,40 @@
         //pointer to object to add
             struct rv_system_object_base_s                      *o,
         //pointer to lock to add (optional)
-            struct rv_system_object_base_s                      *l_optional,
+            struct rv_system_object_base_s                      **l_optional,
         //type of locking to perform, read or write
             bool                                                is_write
         )
         {
             return rv_system_object_locker_add( &t->super, o, l_optional, is_write );
+        }
+
+    //rv_system_object_locker_multiple_add_read() add rwlock to holder collection
+        bool rv_system_object_locker_multiple_add_read
+        (
+        //pointer to struct
+            struct rv_system_object_locker_multiple_s           *t,
+        //pointer to object to add
+            struct rv_system_object_base_s                      *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_readlock_s                  **l_optional
+        )
+        {
+            return rv_system_object_locker_add_read( &t->super, o, l_optional );
+        }
+
+    //rv_system_object_locker_multiple_add_write() add rwlock to holder collection
+        bool rv_system_object_locker_multiple_add_write
+        (
+        //pointer to struct
+            struct rv_system_object_locker_multiple_s           *t,
+        //pointer to object to add
+            struct rv_system_object_base_s                      *o,
+        //pointer to lock to add (optional)
+            struct rv_system_object_writelock_s                  **l_optional
+        )
+        {
+            return rv_system_object_locker_add_write( &t->super, o, l_optional );
         }
 
     //rv_system_object_locker_multiple_clear() clear all mutexes (will unlock them)

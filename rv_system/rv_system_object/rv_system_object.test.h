@@ -39,9 +39,7 @@
         //object to run tests on
             struct rv_system_object_base_s *obj,
         //memory
-            struct rv_system_memory_s *mem,
-        //memory lock
-            struct rv_system_memory_lock_s *meml
+            struct rv_system_memory_s *mem
         );
 
     //rv_system_object_test_object will test locking on object provided, then will create refs and test those
@@ -54,9 +52,7 @@
         //object to run tests on
             struct rv_system_object_base_s *obj,
         //memory
-            struct rv_system_memory_s *mem,
-        //memory lock
-            struct rv_system_memory_lock_s *meml
+            struct rv_system_memory_s *mem
         );
 
 //header guard end

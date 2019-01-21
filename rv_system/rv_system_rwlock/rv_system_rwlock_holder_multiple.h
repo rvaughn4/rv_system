@@ -15,11 +15,11 @@
 
     //header
         #include "rv_system_rwlock_holder.h"
+    //locker
+        #include "../rv_system_lock/rv_system_lock_holder_multiple.h"
 
 /* ------------------- structure stubs --------------------------------------- */
 
-    //handles ownership of mutex lock
-        struct rv_system_rwlock_holder_multiple_s;
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 
@@ -33,6 +33,8 @@
         {
         //super
             struct rv_system_rwlock_holder_s  super;
+        //lock holder
+            struct rv_system_lock_holder_multiple_s slh;
         //entries
             struct rv_system_rwlock_entry_s   entries[ rv_system_rwlock_holder_multiple_entry_max ];
         };

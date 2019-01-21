@@ -19,8 +19,6 @@
         #include "rv_system_rwlock.h"
     //time struct
         #include "../rv_system_time/rv_system_time.h"
-    //lock holder
-        #include "../rv_system_lock/rv_system_lock_holder_multiple.h"
 
 /* -------- structures containing easy function pointers --------------------- */
 
@@ -56,6 +54,10 @@
             t->entries = &t->first_entry;
             t->entry_cnt = 1;
             t->first_entry.p = 0;
+            t->lh = &t->slh;
+        //init lock holder
+            if( !rv_system_lock_holder_create_static( &t->slh, sizeof( t->slh ) ) )
+                return 0;
         //return success
             return 1;
         }
@@ -67,8 +69,12 @@
             struct rv_system_rwlock_holder_s     *t
         )
         {
+        //unlock all
+            rv_system_rwlock_holder_unlock( t );
         //clear all
             rv_system_rwlock_holder_clear( t );
+        //destroy lock holder
+            rv_system_lock_holder_destroy_static( &t->slh );
         }
 
     //rv_system_rwlock_holder_add() add mutex to holder collection
@@ -134,30 +140,11 @@
             uint16_t i, m;
             uint64_t st, tr;
             bool r;
-            union
-            {
-                struct rv_system_lock_holder_multiple_s lm;
-                struct rv_system_lock_holder_s lh;
-            } ll;
             struct rv_system_rwlock_entry_s *e;
-            struct rv_system_lock_holder_s *lh;
             struct rv_system_time_s tm;
         //init time
             if( !rv_system_time_create_static( &tm, sizeof( tm ) ) )
                 return 0;
-        //init lock holder
-            if( t->entry_cnt > 1 )
-            {
-                if( !rv_system_lock_holder_multiple_create_static( &ll.lm, sizeof( ll.lm ) ) )
-                    return 0;
-                lh = &ll.lm.super;
-            }
-            else
-            {
-                if( !rv_system_lock_holder_create_static( &ll.lh, sizeof( ll.lh ) ) )
-                    return 0;
-                lh = &ll.lh;
-            }
         //compute stop time
             st = tm.ticks_ms + timeout_ms;
         //outter timeout loop
@@ -174,15 +161,15 @@
                         if( !e->p || e->is_locked )
                             continue;
                     //to allow multiple readlocks on same thread
-                        if( e->is_write || !rv_system_lock_holder_contains( lh, &e->p->lk ) )
-                            rv_system_lock_holder_add( lh, &e->p->lk );
+                        if( e->is_write || !rv_system_lock_holder_contains( t->lh, &e->p->lk ) )
+                            rv_system_lock_holder_add( t->lh, &e->p->lk );
                     }
                 //attempt locking it
                     if( st > tm.ticks_ms )
                         tr = st - tm.ticks_ms;
                     else
                         tr = 0;
-                    if( !rv_system_lock_holder_lock( lh, is_blocking, tr, all_must_lock_or_fail ) )
+                    if( !rv_system_lock_holder_lock( t->lh, is_blocking, tr, all_must_lock_or_fail ) )
                         continue;
                 //loop through all entries and do read or write locking tests
                     r = 1;
@@ -208,7 +195,7 @@
                         e = &t->entries[ i ];
                         if( !e->p || e->is_locked )
                             continue;
-                        if( !all_must_lock_or_fail && !rv_system_lock_holder_is_locked( lh, &e->p->lk ) )
+                        if( !all_must_lock_or_fail && !rv_system_lock_holder_is_locked( t->lh, &e->p->lk ) )
                             continue;
                         if( e->p->wr_cnt > 0 || ( e->is_write && e->p->rd_cnt > 0 ) )
                         {
@@ -239,13 +226,12 @@
                 }
                 while( 0 );
             //clear lock holder
-                rv_system_lock_holder_clear( lh );
+                rv_system_lock_holder_unlock( t->lh );
+                rv_system_lock_holder_clear( t->lh );
             //update time
                 if( !r )
                     rv_system_time_query( &tm );
             }
-        //release lock holder
-            rv_system_lock_holder_destroy_static( lh );
         //release time
             rv_system_time_destroy_static( &tm );
         //return status
@@ -260,39 +246,21 @@
         )
         {
             uint16_t i;
-            union
-            {
-                struct rv_system_lock_holder_multiple_s lm;
-                struct rv_system_lock_holder_s lh;
-            } ll;
             struct rv_system_rwlock_entry_s *e;
-            struct rv_system_lock_holder_s *lh;
-        //init lock holder
-            if( t->entry_cnt > 1 )
-            {
-                if( !rv_system_lock_holder_multiple_create_static( &ll.lm, sizeof( ll.lm ) ) )
-                    return;
-                lh = &ll.lm.super;
-            }
-            else
-            {
-                if( !rv_system_lock_holder_create_static( &ll.lh, sizeof( ll.lh ) ) )
-                    return;
-                lh = &ll.lh;
-            }
         //populate lock holder
             for( i = 0; i < t->entry_cnt; i++ )
             {
                 e = &t->entries[ i ];
                 if( !e->p || !e->is_locked )
                     continue;
-                if( !rv_system_lock_holder_contains( lh, &e->p->lk ) )
-                    rv_system_lock_holder_add( lh, &e->p->lk );
+                if( !rv_system_lock_holder_contains( t->lh, &e->p->lk ) )
+                    rv_system_lock_holder_add( t->lh, &e->p->lk );
             }
         //attempt to lock
-            if( !rv_system_lock_holder_lock( lh, 1, 0, 1 ) )
+            if( !rv_system_lock_holder_lock( t->lh, 1, 0, 1 ) )
             {
-                rv_system_lock_holder_destroy_static( lh );
+                rv_system_lock_holder_clear( t->lh );
+                rv_system_lock_holder_unlock( t->lh );
                 return;
             }
         //subtract locks
@@ -308,7 +276,8 @@
                 e->is_locked = 0;
             }
         //release lock holder
-            rv_system_lock_holder_destroy_static( lh );
+            rv_system_lock_holder_clear( t->lh );
+            rv_system_lock_holder_unlock( t->lh );
         }
 
     //rv_system_rwlock_holder_contains() returns true if collection contains rwlock

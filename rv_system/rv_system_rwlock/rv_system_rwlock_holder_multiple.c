@@ -50,12 +50,19 @@
         //init super
             if( !rv_system_rwlock_holder_create_static( &t->super, sz ) )
                 return 0;
+        //init lock holder
+            if( !rv_system_lock_holder_multiple_create_static( &t->slh, sizeof( t->slh ) ) )
+            {
+                rv_system_rwlock_holder_destroy_static( &t->super );
+                return 0;
+            }
+        //init values
             m = rv_system_rwlock_holder_multiple_entry_max;
             for( i = 0; i < m; i++ )
                 t->entries[ i ].p = 0;
-        //init values
             t->super.entries = t->entries;
             t->super.entry_cnt = rv_system_rwlock_holder_multiple_entry_max;
+            t->super.lh = &t->slh.super;
         //return success
             return 1;
         }
@@ -67,6 +74,12 @@
             struct rv_system_rwlock_holder_multiple_s     *t
         )
         {
+        //clear
+            rv_system_rwlock_holder_multiple_unlock( t );
+            rv_system_rwlock_holder_multiple_clear( t );
+        //clear lock holder
+            t->super.lh = &t->super.slh;
+            rv_system_lock_holder_multiple_destroy_static( &t->slh );
         //clear all
             rv_system_rwlock_holder_destroy_static( &t->super );
         }

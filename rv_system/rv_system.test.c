@@ -44,15 +44,15 @@
             do
             {
             //lock
-                //b &= rv_system_lock_test( verbose );
+                b &= rv_system_lock_test( verbose );
                 if( !b )
                     continue;
             //rwlock
-                //b &= rv_system_rwlock_test( verbose );
+                b &= rv_system_rwlock_test( verbose );
                 if( !b )
                     continue;
             //memory
-                //b &= rv_system_memory_test( verbose );
+                b &= rv_system_memory_test( verbose );
                 if( !b )
                     continue;
             //object

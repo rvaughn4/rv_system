@@ -33,9 +33,9 @@
         {
         /*.init=*/                  __rv_system_object_ref_init,
         /*.deinit=*/                __rv_system_object_ref_deinit,
-        /*.gen_ref=*/               __rv_system_object_base_gen_ref,
-        /*.gen_readlock=*/          __rv_system_object_base_gen_readlock,
-        /*.gen_writelock=*/         __rv_system_object_base_gen_writelock,
+        /*.gen_ref=*/               __rv_system_object_ref_gen_ref,
+        /*.gen_readlock=*/          __rv_system_object_ref_gen_readlock,
+        /*.gen_writelock=*/         __rv_system_object_ref_gen_writelock,
         /*.get_type=*/              __rv_system_object_ref_get_type,
         /*.get_type_name=*/         __rv_system_object_ref_get_type_name,
         /*.get_all_type_names=*/    __rv_system_object_ref_get_all_type_names,
@@ -245,6 +245,120 @@
             __rv_system_object_base_deinit( p_base );
         }
 
+    //gen ref function, returns false if fails
+        bool __rv_system_object_ref_gen_ref
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to receive ref
+            struct rv_system_object_ref_s       **pp
+        )
+        {
+            bool r;
+            struct rv_system_object_ref_s *t;
+            struct rv_system_rwlock_holder_s lh;
+        //get this object
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_ref ) )
+                return 0;
+        //init lock holder
+            if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
+                return 0;
+            r = 0;
+            do
+            {
+            //add rwl
+                if( !rv_system_rwlock_holder_add( &lh, &t->rwl, 0 ) )
+                    continue;
+            //lock
+                if( !rv_system_rwlock_holder_lock( &lh, 1, 0, 1 ) )
+                    continue;
+            //gen writelock from object
+                if( t->obj )
+                    r = t->obj->base.vtble->gen_ref( &t->obj->base, pp );
+            }
+            while( 0 );
+        //destroy lock holder
+            rv_system_rwlock_holder_destroy_static( &lh );
+        //return status
+            return r;
+        }
+
+    //gen readlock function, returns false if fails
+        bool __rv_system_object_ref_gen_readlock
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to receive readlock
+            struct rv_system_object_readlock_s **pp
+        )
+        {
+            bool r;
+            struct rv_system_object_ref_s *t;
+            struct rv_system_rwlock_holder_s lh;
+        //get this object
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_ref ) )
+                return 0;
+        //init lock holder
+            if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
+                return 0;
+            r = 0;
+            do
+            {
+            //add rwl
+                if( !rv_system_rwlock_holder_add( &lh, &t->rwl, 0 ) )
+                    continue;
+            //lock
+                if( !rv_system_rwlock_holder_lock( &lh, 1, 0, 1 ) )
+                    continue;
+            //gen readlock from object
+                if( t->obj )
+                    r = t->obj->base.vtble->gen_readlock( &t->obj->base, pp );
+            }
+            while( 0 );
+        //destroy lock holder
+            rv_system_rwlock_holder_destroy_static( &lh );
+        //return status
+            return r;
+        }
+
+    //gen writelock function, returns false if fails
+        bool __rv_system_object_ref_gen_writelock
+        (
+        //pointer to object base
+            struct rv_system_object_base_s      *p_base,
+        //pointer to receive writelock
+            struct rv_system_object_writelock_s **pp
+        )
+        {
+            bool r;
+            struct rv_system_object_ref_s *t;
+            struct rv_system_rwlock_holder_s lh;
+        //get this object
+            if( !p_base->vtble->get_type( p_base, (void **)&t, rv_system_object_type__object_ref ) )
+                return 0;
+        //init lock holder
+            if( !rv_system_rwlock_holder_create_static( &lh, sizeof( lh ) ) )
+                return 0;
+            r = 0;
+            do
+            {
+            //add rwl
+                if( !rv_system_rwlock_holder_add( &lh, &t->rwl, 0 ) )
+                    continue;
+            //lock
+                if( !rv_system_rwlock_holder_lock( &lh, 1, 0, 1 ) )
+                    continue;
+            //gen writelock from object
+                if( t->obj )
+                    r = t->obj->base.vtble->gen_writelock( &t->obj->base, pp );
+            }
+            while( 0 );
+        //destroy lock holder
+            rv_system_rwlock_holder_destroy_static( &lh );
+        //return status
+            return r;
+        }
+
     //get pointer to type function, returns false if not available
         bool __rv_system_object_ref_get_type
         (
@@ -375,8 +489,6 @@
                     if( t->obj == o )
                         continue;
                     t->obj = o;
-                //link
-                    //o->base.vtble->link( &o->base, &t->base, is_blocking, timeout_ms );
                     continue;
                 }
             //convert to ref and fetch object
@@ -400,8 +512,6 @@
                             continue;
                     //get object
                         t->obj = r->obj;
-                    //link
-                        //r->obj->base.vtble->link( &r->obj->base, &t->base, is_blocking, timeout_ms );
                     }
                     while( 0 );
                 //unlock ref

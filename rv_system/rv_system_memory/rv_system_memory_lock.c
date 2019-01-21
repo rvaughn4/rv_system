@@ -211,7 +211,7 @@
                 } u_ptr;
                 u_ptr.p = pd;
                 if( !r )
-                    fprintf( stdout, "Failed releasing memory %u\n", u_ptr.ui );
+                    fprintf( stdout, "Failed releasing memory %X\n", u_ptr.ui );
             #endif
             #ifdef rv_system_memory_lock_print_all
                 if( r )
