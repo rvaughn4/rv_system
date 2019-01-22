@@ -30,6 +30,8 @@
         #include "../rv_system_memory/rv_system_memory.h"
         #include "../rv_system_memory/rv_system_memory_lock.h"
 
+#include "../rv_system_thread/rv_system_thread.h"
+
 /* ------------------- static function stubs --------------------------------- */
 
     //rv_system_object_test() test object functionality
@@ -63,7 +65,7 @@
             //create object
                 if( verbose )
                     fprintf( stdout, "\tCreating object...\r\n" );
-                obj = rv_system_object_create( &m, 0 );
+obj = rv_system_thread_create( &m, 0 );
                 b = obj != 0;
                 if( !b )
                 {
