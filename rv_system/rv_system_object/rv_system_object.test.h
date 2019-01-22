@@ -19,6 +19,7 @@
     struct rv_system_object_base_s;
     struct rv_system_memory_s;
     struct rv_system_memory_lock_s;
+    //#define rv_system_object_test_print_memory_enabled
 
 /* ------------------- static function stubs --------------------------------- */
 
@@ -51,6 +52,13 @@
             bool useGenLocks,
         //object to run tests on
             struct rv_system_object_base_s *obj,
+        //memory
+            struct rv_system_memory_s *mem
+        );
+
+    //prints memory contents
+        void rv_system_object_test_print_memory
+        (
         //memory
             struct rv_system_memory_s *mem
         );

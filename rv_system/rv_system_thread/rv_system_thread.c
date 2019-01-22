@@ -21,7 +21,7 @@
     //object
         #include "rv_system_thread_writelock.h"
 
-        char *rv_system_object_type__thread = "rv_system_object_type__thread";
+        char *rv_system_object_type__thread = "thread";
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 

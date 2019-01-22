@@ -25,7 +25,7 @@
         #include "../rv_system_rwlock/rv_system_rwlock.h"
         #include "../rv_system_rwlock/rv_system_rwlock_holder.h"
 
-        char *rv_system_object_type__object_readlock = "rv_system_object_type__object_readlock";
+        char *rv_system_object_type__object_readlock = "object_readlock";
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 

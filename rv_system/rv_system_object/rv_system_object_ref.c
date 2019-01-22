@@ -25,7 +25,7 @@
         #include "../rv_system_rwlock/rv_system_rwlock.h"
         #include "../rv_system_rwlock/rv_system_rwlock_holder.h"
 
-        char *rv_system_object_type__object_ref = "rv_system_object_type__object_ref";
+        char *rv_system_object_type__object_ref = "object_ref";
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 

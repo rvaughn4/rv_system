@@ -23,7 +23,7 @@
         #include "../rv_system_memory/rv_system_memory.h"
         #include "../rv_system_memory/rv_system_memory_lock.h"
 
-        char *rv_system_object_type__object_base = "rv_system_object_type__object_base";
+        char *rv_system_object_type__object_base = "object_base";
 
 /* ----------- virtual function/method stubs and typedefs -------------------- */
 

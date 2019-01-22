@@ -65,7 +65,7 @@
             //create object
                 if( verbose )
                     fprintf( stdout, "\tCreating object...\r\n" );
-obj = rv_system_thread_create( &m, 0 );
+obj = &( ( rv_system_thread_create( &m, 0 ) )->base );
                 b = obj != 0;
                 if( !b )
                 {
@@ -120,7 +120,7 @@ obj = rv_system_thread_create( &m, 0 );
             struct rv_system_object_readlock_s srl0, srl1, srl2, srl3, *rl0, *rl1, *rl2, *rl3;
         //header
             if( verbose )
-                fprintf( stdout, "\tTesting object by locking...\r\n" );
+                fprintf( stdout, "\t\tTesting %s by locking...\r\n", obj->vtble->get_type_value( obj ) );
         //create lock holders
             do
             {
@@ -137,7 +137,7 @@ obj = rv_system_thread_create( &m, 0 );
             while( 0 );
             if( !b )
             {
-                fprintf( stderr, "\tTesting object by locking...FAILED\r\n" );
+                fprintf( stderr, "\t\tTesting %s by locking...FAILED\r\n", obj->vtble->get_type_value( obj ) );
                 return 0;
             }
             do
@@ -164,7 +164,7 @@ obj = rv_system_thread_create( &m, 0 );
                     }
                 //multiple readlocks
                     if( verbose )
-                        fprintf( stdout, "\t\tMultiple readlocks...\r\n" );
+                        fprintf( stdout, "\t\t\tMultiple readlocks...\r\n" );
                     if( useGenLocks )
                     {
                         rl0 = 0;
@@ -178,20 +178,22 @@ obj = rv_system_thread_create( &m, 0 );
                     b &= rv_system_object_locker_add_read( &lh, obj, &rl3 );
                     b &= rv_system_object_locker_multiple_lock( &lhm, 0, 100, 1 );
                     b &= rv_system_object_locker_lock( &lh, 0, 100, 1 );
+                    if( verbose )
+                        rv_system_object_test_print_memory( mem );
                     rv_system_object_locker_multiple_unlock( &lhm );
                     rv_system_object_locker_unlock( &lh );
                     rv_system_object_locker_multiple_clear( &lhm );
                     rv_system_object_locker_clear( &lh );
                     if( !b )
                     {
-                        fprintf( stdout, "\t\tMultiple readlocks...FAILED\r\n" );
+                        fprintf( stdout, "\t\t\tMultiple readlocks...FAILED\r\n" );
                         continue;
                     }
                     if( verbose )
-                        fprintf( stdout, "\t\tMultiple readlocks...SUCCESS\r\n" );
+                        fprintf( stdout, "\t\t\tMultiple readlocks...SUCCESS\r\n" );
                 //multiple writelocks (not legal)
                     if( verbose )
-                        fprintf( stdout, "\t\tMultiple writelocks (illegal)...\r\n" );
+                        fprintf( stdout, "\t\t\tMultiple writelocks (illegal)...\r\n" );
                     if( useGenLocks )
                     {
                         wl0 = 0;
@@ -201,20 +203,22 @@ obj = rv_system_thread_create( &m, 0 );
                     b &= rv_system_object_locker_add_write( &lh, obj, &wl1 );
                     b &= rv_system_object_locker_multiple_lock( &lhm, 0, 100, 1 );
                     b &= !rv_system_object_locker_lock( &lh, 0, 100, 1 );
+                    if( verbose )
+                        rv_system_object_test_print_memory( mem );
                     rv_system_object_locker_multiple_unlock( &lhm );
                     rv_system_object_locker_unlock( &lh );
                     rv_system_object_locker_multiple_clear( &lhm );
                     rv_system_object_locker_clear( &lh );
                     if( !b )
                     {
-                        fprintf( stdout, "\t\tMultiple writelocks (illegal)...FAILED\r\n" );
+                        fprintf( stdout, "\t\t\tMultiple writelocks (illegal)...FAILED\r\n" );
                         continue;
                     }
                     if( verbose )
-                        fprintf( stdout, "\t\tMultiple writelocks (illegal)...SUCCESS\r\n" );
+                        fprintf( stdout, "\t\t\tMultiple writelocks (illegal)...SUCCESS\r\n" );
                 //readlock during writelock
                     if( verbose )
-                        fprintf( stdout, "\t\tReadlock during writelock (illegal)...\r\n" );
+                        fprintf( stdout, "\t\t\tReadlock during writelock (illegal)...\r\n" );
                     if( useGenLocks )
                     {
                         wl0 = 0;
@@ -224,20 +228,22 @@ obj = rv_system_thread_create( &m, 0 );
                     b &= rv_system_object_locker_add_read( &lh, obj, &rl0 );
                     b &= rv_system_object_locker_multiple_lock( &lhm, 0, 100, 1 );
                     b &= !rv_system_object_locker_lock( &lh, 0, 100, 1 );
+                    if( verbose )
+                        rv_system_object_test_print_memory( mem );
                     rv_system_object_locker_multiple_unlock( &lhm );
                     rv_system_object_locker_unlock( &lh );
                     rv_system_object_locker_multiple_clear( &lhm );
                     rv_system_object_locker_clear( &lh );
                     if( !b )
                     {
-                        fprintf( stdout, "\t\tReadlock during writelock (illegal)...FAILED\r\n" );
+                        fprintf( stdout, "\t\t\tReadlock during writelock (illegal)...FAILED\r\n" );
                         continue;
                     }
                     if( verbose )
-                        fprintf( stdout, "\t\tReadlock during writelock (illegal)...SUCCESS\r\n" );
+                        fprintf( stdout, "\t\t\tReadlock during writelock (illegal)...SUCCESS\r\n" );
                 //writelock during readlock
                     if( verbose )
-                        fprintf( stdout, "\t\tWritelock during readlock (illegal)...\r\n" );
+                        fprintf( stdout, "\t\t\tWritelock during readlock (illegal)...\r\n" );
                     if( useGenLocks )
                     {
                         wl0 = 0;
@@ -247,17 +253,19 @@ obj = rv_system_thread_create( &m, 0 );
                     b &= rv_system_object_locker_add_write( &lh, obj, &wl0 );
                     b &= rv_system_object_locker_multiple_lock( &lhm, 0, 100, 1 );
                     b &= !rv_system_object_locker_lock( &lh, 0, 100, 1 );
+                    if( verbose )
+                        rv_system_object_test_print_memory( mem );
                     rv_system_object_locker_multiple_unlock( &lhm );
                     rv_system_object_locker_unlock( &lh );
                     rv_system_object_locker_multiple_clear( &lhm );
                     rv_system_object_locker_clear( &lh );
                     if( !b )
                     {
-                        fprintf( stdout, "\t\tWritelock during readlock (illegal)...FAILED\r\n" );
+                        fprintf( stdout, "\t\t\tWritelock during readlock (illegal)...FAILED\r\n" );
                         continue;
                     }
                     if( verbose )
-                        fprintf( stdout, "\t\tWritelock during readlock (illegal)...SUCCESS\r\n" );
+                        fprintf( stdout, "\t\t\tWritelock during readlock (illegal)...SUCCESS\r\n" );
                 }
                 while( 0 );
             //destroy locks
@@ -279,10 +287,10 @@ obj = rv_system_thread_create( &m, 0 );
             if( b )
             {
                 if( verbose )
-                    fprintf( stdout, "\tTesting object by locking...SUCCESS\r\n" );
+                    fprintf( stdout, "\t\tTesting %s by locking...SUCCESS\r\n", obj->vtble->get_type_value( obj ) );
             }
             else
-                fprintf( stderr, "\tTesting object by locking...FAILED\r\n" );
+                fprintf( stderr, "\t\tTesting %s by locking...FAILED\r\n", obj->vtble->get_type_value( obj ) );
         //return status
             return b;
         }
@@ -385,6 +393,35 @@ obj = rv_system_thread_create( &m, 0 );
             fprintf( stderr, "\tTesting object by locking and creating refs...SUCCEEDED\r\n" );
             return 1;
         }
+
+
+    //prints memory contents
+        void rv_system_object_test_print_memory
+        (
+        //memory
+            struct rv_system_memory_s *mem
+        )
+        {
+        #ifdef rv_system_object_test_print_memory_enabled
+            struct rv_system_memory_lock_s ml;
+        //create meml
+            if( !rv_system_memory_lock_create_static( &ml, sizeof( ml ) ) )
+                return;
+            do
+            {
+            //attempt locking
+                if( !rv_system_memory_lock_lock( &ml, mem ) )
+                    continue;
+            //print
+                rv_system_memory_lock_print( &ml );
+            }
+            while( 0 );
+        //destroy lock
+            rv_system_memory_lock_destroy_static( &ml );
+        #else
+            (void)mem;
+        #endif
+        };
 
 //header guard end
     #endif
