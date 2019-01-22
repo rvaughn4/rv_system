@@ -19,7 +19,7 @@
     struct rv_system_object_base_s;
     struct rv_system_memory_s;
     struct rv_system_memory_lock_s;
-    //#define rv_system_object_test_print_memory_enabled
+    #define rv_system_object_test_print_memory_enabled
 
 /* ------------------- static function stubs --------------------------------- */
 

@@ -23,7 +23,10 @@
     //returns true when successful
         bool rv_system_rwlock_test
         (
-            bool verbose
+        //verbose output, else just print errors
+            bool    verbose,
+        //prepended to every line
+            char    *pref
         );
 
 //header guard end

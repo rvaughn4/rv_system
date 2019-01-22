@@ -234,13 +234,16 @@
             struct rv_system_object_readlock_s **pp
         )
         {
-/*            struct rv_system_object_readlock_s *r;
-            r = rv_system_object_readlock_create( p_base->mem, 0 );
+            struct rv_system_thread_readlock_s *r;
+            r = rv_system_thread_readlock_create( p_base->mem, 0 );
             if( pp )
-                *pp = r;
+            {
+                if( r )
+                    *pp = &r->base;
+                else
+                    *pp = 0;
+            }
             return r != 0;
-            */
-            return __rv_system_object_gen_readlock( p_base, pp );
         }
 
     //gen writelock function, returns false if fails
@@ -252,12 +255,16 @@
             struct rv_system_object_writelock_s **pp
         )
         {
-/*            struct rv_system_object_writelock_s *r;
-            r = rv_system_object_writelock_create( p_base->mem, 0 );
+            struct rv_system_thread_writelock_s *r;
+            r = rv_system_thread_writelock_create( p_base->mem, 0 );
             if( pp )
-                *pp = r;
-            return r != 0; */
-            return __rv_system_object_gen_writelock( p_base, pp );
+            {
+                if( r )
+                    *pp = &r->base;
+                else
+                    *pp = 0;
+            }
+            return r != 0;
         }
 
     //get pointer to type function, returns false if not available

@@ -44,11 +44,11 @@
             do
             {
             //lock
-                b &= rv_system_lock_test( verbose );
+                b &= rv_system_lock_test( verbose, "\t" );
                 if( !b )
                     continue;
             //rwlock
-                b &= rv_system_rwlock_test( verbose );
+                b &= rv_system_rwlock_test( verbose, "\t" );
                 if( !b )
                     continue;
             //memory
