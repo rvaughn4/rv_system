@@ -288,7 +288,9 @@
         void rv_system_memory_lock_print
         (
         //pointer to memory holding struct
-            struct rv_system_memory_lock_s    *t
+            struct rv_system_memory_lock_s    *t,
+        //line prefix /indentation
+            char                              *pref
         )
         {
         //must be locked
@@ -296,11 +298,11 @@
                 return;
         //print
             #ifdef rv_system_memory_lock_print_enabled
-                fprintf( stdout, "Memory Lock Printout %s\n", "" );
+                fprintf( stdout, "%sMemory Lock Printout %s\n", pref, "" );
             #endif
         //print next
             if( t->t->first )
-                rv_system_memory_frame_print( t->t->first );
+                rv_system_memory_frame_print( t->t->first, pref );
         }
 
     //rv_system_memory_lock_get_stats() compute memory statistics
@@ -350,7 +352,9 @@
         //pointer to memory holding struct
             struct rv_system_memory_lock_s      *t,
         //stats
-            struct rv_system_memory_stats_s     *s
+            struct rv_system_memory_stats_s     *s,
+        //line prefix /indentation
+            char                                *pref
         )
         {
             struct rv_system_memory_stats_s ss;
@@ -361,25 +365,25 @@
                 rv_system_memory_lock_get_stats( t, s );
             }
             #ifdef rv_system_memory_lock_print_enabled
-                fprintf( stdout, "Memory Stats\n" );
+                fprintf( stdout, "%sMemory Stats\n", pref );
             //print allocation stats
-                fprintf( stdout, "\tAllocations\n" );
-                fprintf( stdout, "\t\tCount: %u allocations\n", (unsigned int)s->cnt_allocations );
-                fprintf( stdout, "\t\tAvg Size: %u bytes\n", (unsigned int)s->avg_allocation_size );
-                fprintf( stdout, "\t\tOverhead: %u bytes\n", (unsigned int)s->mem_allocation_overhead );
-                fprintf( stdout, "\t\tTotal: %u bytes\n", (unsigned int)s->allocation_size );
-                fprintf( stdout, "\t\tUsed: %u bytes\n", (unsigned int)s->allocation_used );
+                fprintf( stdout, "%s\tAllocations\n", pref );
+                fprintf( stdout, "%s\t\tCount: %u allocations\n", pref, (unsigned int)s->cnt_allocations );
+                fprintf( stdout, "%s\t\tAvg Size: %u bytes\n", pref, (unsigned int)s->avg_allocation_size );
+                fprintf( stdout, "%s\t\tOverhead: %u bytes\n", pref, (unsigned int)s->mem_allocation_overhead );
+                fprintf( stdout, "%s\t\tTotal: %u bytes\n", pref, (unsigned int)s->allocation_size );
+                fprintf( stdout, "%s\t\tUsed: %u bytes\n", pref, (unsigned int)s->allocation_used );
             //print frame stats
-                fprintf( stdout, "\tFrames\n" );
-                fprintf( stdout, "\t\tCount: %u frames\n", (unsigned int)s->cnt_frames );
-                fprintf( stdout, "\t\tAvg Size: %u bytes\n", (unsigned int)s->avg_frame_size );
-                fprintf( stdout, "\t\tOverhead: %u bytes\n", (unsigned int)s->mem_frame_overhead );
-                fprintf( stdout, "\t\tTotal: %u bytes\n", (unsigned int)s->frame_size );
+                fprintf( stdout, "%s\tFrames\n", pref );
+                fprintf( stdout, "%s\t\tCount: %u frames\n", pref, (unsigned int)s->cnt_frames );
+                fprintf( stdout, "%s\t\tAvg Size: %u bytes\n", pref, (unsigned int)s->avg_frame_size );
+                fprintf( stdout, "%s\t\tOverhead: %u bytes\n", pref, (unsigned int)s->mem_frame_overhead );
+                fprintf( stdout, "%s\t\tTotal: %u bytes\n", pref, (unsigned int)s->frame_size );
             //print overall stats
-                fprintf( stdout, "\tTotals\n" );
-                fprintf( stdout, "\t\tUsed: %u bytes\n", (unsigned int)s->mem_used );
-                fprintf( stdout, "\t\tFree: %u bytes\n", (unsigned int)s->mem_free );
-                fprintf( stdout, "\t\tOverhead: %u bytes\n", (unsigned int)s->mem_overhead );
+                fprintf( stdout, "%s\tTotals\n", pref );
+                fprintf( stdout, "%s\t\tUsed: %u bytes\n", pref, (unsigned int)s->mem_used );
+                fprintf( stdout, "%s\t\tFree: %u bytes\n", pref, (unsigned int)s->mem_free );
+                fprintf( stdout, "%s\t\tOverhead: %u bytes\n", pref, (unsigned int)s->mem_overhead );
             #endif
         }
 

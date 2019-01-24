@@ -52,7 +52,7 @@
                 if( !b )
                     continue;
             //memory
-                b &= rv_system_memory_test( verbose );
+                b &= rv_system_memory_test( verbose, "\t" );
                 if( !b )
                     continue;
             //object

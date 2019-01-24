@@ -239,12 +239,16 @@
         void rv_system_memory_lock_print
         (
         //pointer to memory holding struct
-            struct rv_system_memory_lock_s    *t
+            struct rv_system_memory_lock_s    *t,
+        //line prefix /indentation
+            char                              *pref
         );
         typedef void (* rv_system_memory_lock_print_ptr)
         (
         //pointer to memory holding struct
-            struct rv_system_memory_lock_s    *t
+            struct rv_system_memory_lock_s    *t,
+        //line prefix /indentation
+            char                              *pref
         );
 
     //rv_system_memory_lock_get_stats() compute memory statistics
@@ -270,14 +274,18 @@
         //pointer to memory holding struct
             struct rv_system_memory_lock_s      *t,
         //stats
-            struct rv_system_memory_stats_s     *s
+            struct rv_system_memory_stats_s     *s,
+        //line prefix /indentation
+            char                                *pref
         );
         typedef void (* rv_system_memory_lock_print_stats_ptr)
         (
         //pointer to memory holding struct
             struct rv_system_memory_lock_s      *t,
         //stats
-            struct rv_system_memory_stats_s     *s
+            struct rv_system_memory_stats_s     *s,
+        //line prefix /indentation
+            char                                *pref
         );
 
 /* -- virtual method corresponding static function stubs --------------------- */

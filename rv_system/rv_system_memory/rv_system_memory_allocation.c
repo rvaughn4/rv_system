@@ -385,7 +385,9 @@
         void rv_system_memory_allocation_print
         (
         //pointer to memory holding struct
-            struct rv_system_memory_allocation_s    *t
+            struct rv_system_memory_allocation_s    *t,
+        //line prefix /indent
+            char                                    *pref
         )
         {
             struct rv_system_memory_allocation_s *n;
@@ -403,10 +405,11 @@
                     struct rv_system_object_base_s *ob;
                 } u_ptr, u_sz;
             //used or free and size
+                fprintf( stdout, "%s\t\t", pref );
                 if( t->is_used )
-                    fprintf( stdout, "\t\tUsed " );
+                    fprintf( stdout, "Used " );
                 else
-                    fprintf( stdout, "\t\tFree " );
+                    fprintf( stdout, "Free " );
                 u_ptr.p = (void *)t;
                 u_sz.ui32 = t->size;
                 fprintf( stdout, "Allocation at %X with %u bytes.\n", u_ptr.ui, u_sz.ui );
@@ -416,10 +419,10 @@
                 if( t->is_used && t->offset_object_base )
                 {
                     u_ptr.ui64 += t->offset_object_base - 1;
-                    fprintf( stdout, "\t\t\t%s with size %u at %X\n", rv_system_object_base_get_type_value( u_ptr.ob ), (unsigned int)rv_system_object_base_get_size( u_ptr.ob ), u_ptr.ui );
+                    fprintf( stdout, "%s\t\t\t%s with size %u at %X\n", pref, rv_system_object_base_get_type_value( u_ptr.ob ), (unsigned int)rv_system_object_base_get_size( u_ptr.ob ), u_ptr.ui );
                     u_sz.ob = u_ptr.ob->vtble->get_link( u_ptr.ob );
                     if( u_sz.ob )
-                        fprintf( stdout, "\t\t\tlinked to %s at %X\n", rv_system_object_base_get_type_value( u_sz.ob ), u_sz.ui );
+                        fprintf( stdout, "%s\t\t\tlinked to %s at %X\n", pref, rv_system_object_base_get_type_value( u_sz.ob ), u_sz.ui );
                 }
             #else
             //get next
@@ -428,7 +431,7 @@
         //print next
             if( !n )
                 return;
-            rv_system_memory_allocation_print( n );
+            rv_system_memory_allocation_print( n, pref );
         }
 
     //rv_system_memory_allocation_get_stats() compute memory statistics

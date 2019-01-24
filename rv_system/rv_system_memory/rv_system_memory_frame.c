@@ -288,7 +288,9 @@
         void rv_system_memory_frame_print
         (
         //pointer to memory holding struct
-            struct rv_system_memory_frame_s    *t
+            struct rv_system_memory_frame_s    *t,
+        //line prefix /indent
+            char                                *pref
         )
         {
             struct rv_system_memory_allocation_s *a;
@@ -306,16 +308,16 @@
                 } u_ptr, u_sz;
                 u_ptr.p = (void *)t;
                 u_sz.ui32 = t->size;
-                fprintf( stdout, "\tFrame at %X with %u bytes.\n", u_ptr.ui, u_sz.ui );
+                fprintf( stdout, "%s\tFrame at %X with %u bytes.\n", pref, u_ptr.ui, u_sz.ui );
             #endif
         //get next
             rv_system_memory_frame_get_components( t, 0, &a );
         //print allocation
             if( a )
-                rv_system_memory_allocation_print( a );
+                rv_system_memory_allocation_print( a, pref );
         //print next
             if( t->next )
-                rv_system_memory_frame_print( t->next );
+                rv_system_memory_frame_print( t->next, pref );
         }
 
     //rv_system_memory_lock_get_stats() compute memory statistics

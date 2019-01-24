@@ -37,7 +37,9 @@
         bool rv_system_memory_test
         (
         //do print out everything
-            bool    verbose
+            bool    verbose,
+        //line refix /indent
+            char    *pref
         );
 
 

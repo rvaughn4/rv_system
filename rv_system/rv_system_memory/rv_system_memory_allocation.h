@@ -217,12 +217,16 @@
         void rv_system_memory_allocation_print
         (
         //pointer to memory holding struct
-            struct rv_system_memory_allocation_s    *t
+            struct rv_system_memory_allocation_s    *t,
+        //line prefix /indent
+            char                                    *pref
         );
         typedef void (* rv_system_memory_allocation_print_ptr)
         (
         //pointer to memory holding struct
-            struct rv_system_memory_allocation_s    *t
+            struct rv_system_memory_allocation_s    *t,
+        //line prefix /indent
+            char                                    *pref
         );
 
     //rv_system_memory_allocation_get_stats() compute memory statistics

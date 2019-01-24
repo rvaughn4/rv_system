@@ -413,7 +413,7 @@ obj = &( ( rv_system_thread_create( &m, 0 ) )->base );
                 if( !rv_system_memory_lock_lock( &ml, mem ) )
                     continue;
             //print
-                rv_system_memory_lock_print( &ml );
+                rv_system_memory_lock_print( &ml, "" );
             }
             while( 0 );
         //destroy lock
@@ -421,7 +421,7 @@ obj = &( ( rv_system_thread_create( &m, 0 ) )->base );
         #else
             (void)mem;
         #endif
-        };
+        }
 
 //header guard end
     #endif

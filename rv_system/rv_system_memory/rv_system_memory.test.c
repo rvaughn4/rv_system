@@ -28,7 +28,9 @@
         bool rv_system_memory_test
         (
         //do print out everything
-            bool    verbose
+            bool    verbose,
+        //line prefix /indent
+            char    *pref
         )
         {
             struct rv_system_memory_s m;
@@ -36,74 +38,78 @@
             struct rv_system_memory_lock_s l;
             void *p0, *p1, *p2;
             bool r = 1;
+            char prefbuff[ 1024 ];
         //header
             if( verbose )
-                fprintf( stdout, "====== Memory Test ======\n" );
+                fprintf( stdout, "%s====== Memory Test ======\n", pref );
         //creating memory
             if( verbose )
-                fprintf( stdout, "\tCreating memory...\n" );
+                fprintf( stdout, "%s\tCreating memory...\n", pref );
             if( !rv_system_memory_create_static( &m, sizeof( m ) ) )
             {
-                fprintf( stderr, "\tCreating memory...FAILED\n" );
-                fprintf( stderr, "====== Memory Test - FAILED ======\n" );
+                fprintf( stderr, "%s\tCreating memory...FAILED\n", pref );
+                fprintf( stderr, "%s====== Memory Test - FAILED ======\n", pref );
                 return 0;
             }
             if( verbose )
-                fprintf( stdout, "\tCreating memory...SUCCESS\n" );
+                fprintf( stdout, "%s\tCreating memory...SUCCESS\n", pref );
         //detroy loop hack
             do
             {
             //create lock
                 if( verbose )
-                    fprintf( stdout, "\tCreating memory lock...\n" );
+                    fprintf( stdout, "%s\tCreating memory lock...\n", pref );
                 if( !rv_system_memory_lock_create_static( &l, sizeof( l ) ) )
                 {
-                    fprintf( stderr, "\tCreating memory lock...FAILED\n" );
+                    fprintf( stderr, "%s\tCreating memory lock...FAILED\n", pref );
                     r = 0;
                     continue;
                 }
                 if( verbose )
-                    fprintf( stdout, "\tCreating memory lock...SUCCESS\n" );
+                    fprintf( stdout, "%s\tCreating memory lock...SUCCESS\n", pref );
             //lock destroy hack
                 do
                 {
                 //lock memory
                     if( verbose )
-                        fprintf( stdout, "\tLocking memory...\n" );
+                        fprintf( stdout, "%s\tLocking memory...\n", pref );
                     if( !rv_system_memory_lock_lock( &l, &m ) )
                     {
-                        fprintf( stderr, "\tLocking memory...SUCCESS\n" );
+                        fprintf( stderr, "%s\tLocking memory...SUCCESS\n", pref );
                         r = 0;
                         continue;
                     }
                     if( verbose )
-                        fprintf( stdout, "\tLocking memory...SUCCESS\n" );
+                        fprintf( stdout, "%s\tLocking memory...SUCCESS\n", pref );
                 //lock memory loop hack
                     do
                     {
                     //allocate 3 allocations
                         if( verbose )
-                            fprintf( stdout, "\tAllocating memory...\n" );
+                            fprintf( stdout, "%s\tAllocating memory...\n", pref );
                         r &= rv_system_memory_lock_allocate( &l, 1000, &p0 );
                         r &= rv_system_memory_lock_allocate( &l, 10000, &p1 );
                         r &= rv_system_memory_lock_allocate( &l, 100000, &p2 );
                         rv_system_memory_lock_get_stats( &l, &s );
                         if( verbose )
-                            rv_system_memory_lock_print( &l );
-                        if( verbose )
-                            rv_system_memory_lock_print_stats( &l, &s );
+                        {
+                            prefbuff[ 0 ] = 0;
+                            snprintf( prefbuff, 1024, "%s%s", pref, "\t\t" );
+                            rv_system_memory_lock_print( &l, prefbuff );
+                            rv_system_memory_lock_print_stats( &l, &s, prefbuff );
+                        }
                         r &= ( s.allocation_used == 111000 );
                         rv_system_memory_lock_release( &l, p0 );
                         rv_system_memory_lock_release( &l, p1 );
                         rv_system_memory_lock_release( &l, p2 );
                         if( verbose )
-                            rv_system_memory_lock_print( &l );
+                            rv_system_memory_lock_print( &l, prefbuff );
                         if( !r )
-                            fprintf( stderr, "\tAllocating memory...FAILED\n" );
+                            fprintf( stderr, "%s\tAllocating memory...FAILED\n", pref );
                         else
                         {
                             if( verbose )
-                                fprintf( stdout, "\tAllocating memory...SUCCESS\n" );
+                                fprintf( stdout, "%s\tAllocating memory...SUCCESS\n", pref );
                         }
                     }
                     while( 0 );
@@ -111,26 +117,26 @@
                 while( 0 );
             //destroy lock
                 if( verbose )
-                    fprintf( stdout, "\tDestroying memory lock...\n" );
+                    fprintf( stdout, "%s\tDestroying memory lock...\n", pref );
                 rv_system_memory_lock_destroy_static( &l );
                 if( verbose )
-                    fprintf( stdout, "\tDestroying memory lock...SUCCESS\n" );
+                    fprintf( stdout, "%s\tDestroying memory lock...SUCCESS\n", pref );
             }
             while( 0 );
         //destroy memory
             if( verbose )
-                fprintf( stdout, "\tDestroying memory...\n" );
+                fprintf( stdout, "%s\tDestroying memory...\n", pref );
             rv_system_memory_destroy_static( &m );
             if( verbose )
-                fprintf( stdout, "\tDestroying memory...SUCCESS\n" );
+                fprintf( stdout, "%s\tDestroying memory...SUCCESS\n", pref );
         //return status
             if( r )
             {
                 if( verbose )
-                    fprintf( stdout, "====== Memory Test - SUCCESS ======\n" );
+                    fprintf( stdout, "%s====== Memory Test - SUCCESS ======\n", pref );
             }
             else
-                fprintf( stderr, "====== Memory Test - FAILED ======\n" );
+                fprintf( stderr, "%s====== Memory Test - FAILED ======\n", pref );
             return r;
         }
 

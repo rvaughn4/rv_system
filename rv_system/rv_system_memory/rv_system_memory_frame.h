@@ -194,12 +194,16 @@
         void rv_system_memory_frame_print
         (
         //pointer to memory holding struct
-            struct rv_system_memory_frame_s    *t
+            struct rv_system_memory_frame_s    *t,
+        //line prefix /indent
+            char                                *pref
         );
         typedef void (* rv_system_memory_frame_print_ptr)
         (
         //pointer to memory holding struct
-            struct rv_system_memory_frame_s    *t
+            struct rv_system_memory_frame_s    *t,
+        //line prefix /indent
+            char                                *pref
         );
 
     //rv_system_memory_lock_get_stats() compute memory statistics
